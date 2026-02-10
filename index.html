@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
+  <!-- Sin zoom y pantalla estable -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -19,13 +20,8 @@
       --border:rgba(255,255,255,.10);
       --shadow: 0 18px 60px rgba(0,0,0,.45);
       --radius:18px;
-      --indigo:rgba(99,102,241,.90);
-      --green:rgba(34,197,94,.90);
-      --red:rgba(244,63,94,.92);
-      --amber:rgba(251,191,36,.92);
     }
 
-    /* Fijo, sin zoom/scroll lateral */
     html, body{
       width:100%;
       height:100%;
@@ -36,20 +32,22 @@
       touch-action:manipulation;
       -webkit-text-size-adjust:100%;
       background:var(--bg);
-      color:var(--text);
-      font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial;
     }
     body{
       background:
         radial-gradient(1200px 800px at 20% 10%, rgba(99,102,241,.22), transparent 55%),
         radial-gradient(1200px 800px at 80% 30%, rgba(34,197,94,.18), transparent 55%),
         var(--bg);
+      color:var(--text);
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial;
     }
     *{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
 
-    /* Safe area iPhone */
-    .app{
+    /* Safe area iPhone + layout */
+    .wrap{
+      max-width:980px;
       height:100%;
+      margin:0 auto;
       padding:
         calc(14px + env(safe-area-inset-top))
         calc(14px + env(safe-area-inset-right))
@@ -58,8 +56,7 @@
       display:flex;
       flex-direction:column;
       gap:12px;
-      max-width:980px;
-      margin:0 auto;
+      overflow:hidden;
     }
 
     .topbar{
@@ -76,14 +73,14 @@
       display:grid;place-items:center;box-shadow:var(--shadow);
       flex:0 0 auto;
     }
-    .title{min-width:0; line-height:1.1;}
+    .title{line-height:1.1; min-width:0;}
     .title h2{
       margin:0;
       font-size:18px;
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
-      max-width: 64vw;
+      max-width: 56vw;
     }
     .title .sub{
       margin:2px 0 0;
@@ -92,7 +89,7 @@
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
-      max-width: 64vw;
+      max-width: 56vw;
     }
 
     .pill{
@@ -101,7 +98,6 @@
       border:1px solid rgba(255,255,255,.10);
       padding:8px 10px;border-radius:999px
     }
-
     .avatar{
       width:34px;height:34px;border-radius:12px;
       background:rgba(255,255,255,.10);
@@ -109,12 +105,13 @@
     }
     .avatar img{width:100%;height:100%;object-fit:cover;display:block}
 
+    /* Vista con scroll vertical interno */
     .view{
       flex:1;
       overflow-y:auto;
       overflow-x:hidden;
       -webkit-overflow-scrolling: touch;
-      padding-bottom: 92px; /* espacio para navbar */
+      padding-bottom: 92px; /* espacio para nav inferior */
     }
 
     .card{
@@ -165,7 +162,7 @@
     .split{display:grid;grid-template-columns: 1fr;gap:12px}
     @media (min-width: 900px){ .split{grid-template-columns: 1.2fr .8fr;} }
 
-    /* Bottom Nav (NO se corta jamás) */
+    /* Nav inferior (NO se corta) */
     .nav{
       position:fixed;
       left:0; right:0;
@@ -177,7 +174,7 @@
         calc(10px + env(safe-area-inset-left));
       display:flex;
       justify-content:center;
-      z-index:20;
+      z-index:40;
       pointer-events:none;
     }
     .navInner{
@@ -224,7 +221,7 @@
       align-items:center;
       justify-content:center;
       padding:18px;
-      z-index:50
+      z-index:100
     }
     .modal{
       max-width:720px;width:100%;
@@ -252,10 +249,10 @@
     .right{display:flex;gap:10px;align-items:center;justify-content:flex-end;margin-top:12px}
     .dangerNote{color:rgba(251,191,36,.95);font-size:12px;margin-top:10px}
 
-    /* Drive screen */
+    /* Pantalla de conducción */
     #driveScreen{
       display:none;
-      position:fixed; inset:0; z-index:100;
+      position:fixed; inset:0; z-index:150;
       padding:
         calc(14px + env(safe-area-inset-top))
         calc(14px + env(safe-area-inset-right))
@@ -331,67 +328,7 @@
       pointer-events:none;
     }
 
-    /* Splash */
-    #splash{
-      display:none;
-      position:fixed; inset:0; z-index:300;
-      background:
-        radial-gradient(900px 600px at 30% 10%, rgba(99,102,241,.25), transparent 55%),
-        radial-gradient(900px 600px at 80% 35%, rgba(34,197,94,.18), transparent 55%),
-        rgba(2,2,10,.95);
-      backdrop-filter: blur(12px);
-      padding:18px;
-      overflow:hidden;
-    }
-    .splashBox{
-      height:100%;
-      max-width:720px;
-      margin:0 auto;
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      align-items:center;
-      gap:14px;
-      text-align:center;
-    }
-    .splashTitle{
-      font-weight:1100;
-      letter-spacing:.06em;
-      text-transform:uppercase;
-      color:rgba(255,255,255,.85);
-      font-size:12px;
-    }
-    .splashSpeed{
-      font-size:78px;
-      font-weight:1200;
-      line-height:1;
-      letter-spacing:.5px;
-    }
-    .splashUnit{
-      color:var(--muted2);
-      font-weight:1100;
-      letter-spacing:.12em;
-      text-transform:uppercase;
-      font-size:12px;
-      margin-top:-8px;
-    }
-    .splashBar{
-      width:min(520px, 100%);
-      height:12px;
-      border-radius:999px;
-      background:rgba(255,255,255,.10);
-      overflow:hidden;
-      border:1px solid rgba(255,255,255,.12);
-    }
-    .splashFill{
-      height:100%;
-      width:0%;
-      background:linear-gradient(90deg, rgba(99,102,241,.85), rgba(34,197,94,.85));
-      border-radius:999px;
-      box-shadow: 0 18px 60px rgba(0,0,0,.35);
-    }
-
-    /* Record overlay */
+    /* Pantalla de récord */
     #recordOverlay{
       display:none;
       position:fixed; inset:0; z-index:200;
@@ -451,7 +388,7 @@
 </head>
 
 <body>
-  <div class="app">
+  <div class="wrap">
     <div class="topbar">
       <div class="brand">
         <div class="logo" id="modeIcon">🏁</div>
@@ -465,12 +402,12 @@
         <div class="avatar" id="avatarBox">🙂</div>
         <div style="min-width:0">
           <div style="font-weight:1200; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:34vw" id="whoLine">No name</div>
-          <div style="color:var(--muted2); font-size:12px" id="modeLine">Mode: —</div>
+          <div style="color:var(--muted2);font-size:12px" id="modeLine">Mode: —</div>
         </div>
       </div>
     </div>
 
-    <!-- VIEWS -->
+    <!-- Views -->
     <div id="viewTracker" class="view">
       <div class="split">
         <div class="card">
@@ -592,25 +529,13 @@
     </div>
   </div>
 
-  <!-- Bottom Nav -->
+  <!-- Nav inferior -->
   <div class="nav">
     <div class="navInner">
       <button class="navBtn active" id="navTracker"><div class="ico">🏁</div><div class="txt" id="navTrackerTxt">Tracker</div></button>
       <button class="navBtn" id="navBoard"><div class="ico">🏆</div><div class="txt" id="navBoardTxt">Leaderboard</div></button>
       <button class="navBtn" id="navLibrary"><div class="ico">📚</div><div class="txt" id="navLibraryTxt">Library</div></button>
       <button class="navBtn" id="navGlobal"><div class="ico">🌍</div><div class="txt" id="navGlobalTxt">Global</div></button>
-    </div>
-  </div>
-
-  <!-- Splash -->
-  <div id="splash">
-    <div class="splashBox">
-      <div class="logo" style="width:58px;height:58px;border-radius:20px">🏁</div>
-      <div class="splashTitle" id="splashTitle">SPEED TRACKER</div>
-      <div class="splashSpeed"><span id="splashNum">0</span></div>
-      <div class="splashUnit" id="splashUnit">KM/H</div>
-      <div class="splashBar"><div class="splashFill" id="splashFill"></div></div>
-      <div class="small" id="splashHint">Loading…</div>
     </div>
   </div>
 
@@ -635,7 +560,7 @@
             <svg viewBox="0 0 220 140" width="100%" height="100%">
               <path d="M20 120 A90 90 0 0 1 200 120" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="16" stroke-linecap="round"/>
               <path id="gaugeArc" d="M20 120 A90 90 0 0 1 200 120" fill="none" stroke="rgba(99,102,241,.85)" stroke-width="16" stroke-linecap="round"
-                    stroke-dasharray="0 9999" stroke-dashoffset="0"/>
+                    stroke-dasharray="0 9999" />
               <g transform="translate(110,120)">
                 <g id="needleGroup" transform="rotate(-110)">
                   <line x1="0" y1="0" x2="0" y2="-78" stroke="white" stroke-width="4" stroke-linecap="round" />
@@ -646,7 +571,7 @@
 
             <div class="speedBig">
               <div class="n" id="driveSpeed">--</div>
-              <div class="u" id="driveUnit">km/h</div>
+              <div class="u">km/h</div>
             </div>
           </div>
         </div>
@@ -778,20 +703,18 @@
 <script>
 (() => {
   // Storage keys
-  const KEY_SESSIONS = "speed_sessions_v8";
+  const KEY_SESSIONS = "speed_sessions_ok_v1";
   const KEY_MODE = "speed_mode_v1";
   const KEY_NAME = "speed_name_v1";
   const KEY_AVATAR = "speed_avatar_v1";
   const KEY_LANG = "speed_lang_v1";
 
-  // Modes
   const MODES = {
     scooter: { es:"Patinete", en:"Scooter", icon:"🛴", title_es:"Patinete Tracker", title_en:"Scooter Tracker", sub_es:"Registro de sesiones y récords", sub_en:"Track sessions and records" },
     car:     { es:"Coche",    en:"Car",     icon:"🚗", title_es:"Coche Tracker",    title_en:"Car Tracker",    sub_es:"Registro de sesiones y récords", sub_en:"Track sessions and records" },
     moto:    { es:"Moto",     en:"Motorbike",icon:"🏍️",title_es:"Moto Tracker",     title_en:"Motorbike Tracker",sub_es:"Registro de sesiones y récords", sub_en:"Track sessions and records" }
   };
 
-  // i18n
   const i18n = {
     es: {
       nav:{ tracker:"Tracker", board:"Marcador", library:"Biblioteca", global:"Global" },
@@ -922,12 +845,12 @@
     return best;
   }
 
-  /* Anti-zoom (iOS) extra */
+  // Anti-zoom iOS extra
   document.addEventListener("gesturestart", (e) => e.preventDefault(), {passive:false});
   document.addEventListener("gesturechange", (e) => e.preventDefault(), {passive:false});
   document.addEventListener("gestureend", (e) => e.preventDefault(), {passive:false});
 
-  /* Keep screen awake (best effort) */
+  // Wake lock (best effort)
   let wakeLock = null;
   async function requestWakeLock(){
     try{
@@ -947,7 +870,6 @@
   // Elements
   const spdEl = $("spd"), maxEl = $("max"), dstEl = $("dst"), timEl = $("tim");
   const statusEl = $("status");
-
   const btnStart = $("btnStart"), btnStop = $("btnStop"), btnSave = $("btnSave");
   const btnClear = $("btnClear");
   const btnChangeMode = $("btnChangeMode");
@@ -976,16 +898,11 @@
   const tblBody = $("tbl").querySelector("tbody");
   const tblGlobalBody = $("tblGlobal").querySelector("tbody");
   const tblByModeBody = $("tblByMode").querySelector("tbody");
-
   const libraryList = $("libraryList");
   const libraryEmpty = $("libraryEmpty");
 
   const langOverlay = $("langOverlay");
   const modeOverlay = $("modeOverlay");
-
-  const splash = $("splash");
-  const splashNum = $("splashNum");
-  const splashFill = $("splashFill");
 
   const driveScreen = $("driveScreen");
   const driveIcon = $("driveIcon");
@@ -1043,7 +960,6 @@
     viewBoard.style.display = "none";
     viewLibrary.style.display = "none";
     viewGlobal.style.display = "none";
-
     [navTracker,navBoard,navLibrary,navGlobal].forEach(b => b.classList.remove("active"));
 
     if (which === "tracker"){ viewTracker.style.display=""; navTracker.classList.add("active"); }
@@ -1193,8 +1109,8 @@
   function renderBoards(){
     const lang = getLang() || "en";
     const list = loadSessions().slice();
-
     const sorted = list.slice().sort((a,b) => (b.maxKmh||0) - (a.maxKmh||0));
+
     tblGlobalBody.innerHTML = "";
     for (const s of sorted.slice(0, 50)){
       const tr = document.createElement("tr");
@@ -1239,10 +1155,10 @@
     for (const s of list){
       const avg = Number.isFinite(s.avgKmh) ? s.avgKmh.toFixed(1) : "--";
       const acc = Number.isFinite(s.avgAccM) ? Math.round(s.avgAccM) : "--";
-      const div = document.createElement("div");
-      div.className = "card";
-      div.style.margin = "0";
-      div.innerHTML = `
+      const card = document.createElement("div");
+      card.className = "card";
+      card.style.margin = "0";
+      card.innerHTML = `
         <div style="display:flex; justify-content:space-between; gap:10px; align-items:flex-start;">
           <div style="min-width:0">
             <div style="font-weight:1200">${s.when}</div>
@@ -1254,7 +1170,7 @@
           <div class="logo" style="width:40px;height:40px;border-radius:14px">${(MODES[s.mode]?.icon||"🏁")}</div>
         </div>
       `;
-      libraryList.appendChild(div);
+      libraryList.appendChild(card);
     }
   }
 
@@ -1262,6 +1178,7 @@
     driveScreen.style.display = show ? "block" : "none";
     if (show) slideStop.value = "0";
   }
+
   $("driveBack").onclick = () => showDrive(false);
 
   slideStop.addEventListener("input", () => {
@@ -1329,67 +1246,28 @@
   recBack.onclick = () => showRecord(false);
   recSave.onclick = () => { btnSave.click(); showRecord(false); };
 
-  async function runSplash(){
-    splash.style.display = "block";
-    const target = 120;
-    const durMs = 900;
-    const start = performance.now();
-    const tick = (t0) => {
-      const p = Math.min(1, (t0 - start) / durMs);
-      const eased = 1 - Math.pow(1 - p, 3);
-      splashNum.textContent = String(Math.round(target * eased));
-      splashFill.style.width = (eased * 100).toFixed(1) + "%";
-      if (p < 1) requestAnimationFrame(tick);
-    };
-    requestAnimationFrame(tick);
-    await new Promise(r => setTimeout(r, 1050));
-    splash.style.display = "none";
-  }
-
-  function boot(){
-    applyI18n();
-    updateProfileHeader();
-    showView("tracker");
-
-    if (!getLang()){
-      langOverlay.style.display = "flex";
-      return;
-    }
-    if (!getMode()){
-      modeOverlay.style.display = "flex";
-      return;
-    }
-    runSplash().then(() => {
-      applyModeUI();
-      renderSessions();
-      renderBoards();
-      renderLibrary();
-    });
-  }
-
   // Modals
+  function openLang(){ langOverlay.style.display = "flex"; }
+  function openMode(){ modeOverlay.style.display = "flex"; }
+  $("langClose").onclick = () => langOverlay.style.display = "none";
+  $("modeClose").onclick = () => modeOverlay.style.display = "none";
+  langOverlay.addEventListener("click", (e) => { if (e.target === langOverlay) langOverlay.style.display="none"; });
+  modeOverlay.addEventListener("click", (e) => { if (e.target === modeOverlay) modeOverlay.style.display="none"; });
+
   $("pickEs").onclick = () => { setLang("es"); langOverlay.style.display="none"; boot(); };
   $("pickEn").onclick = () => { setLang("en"); langOverlay.style.display="none"; boot(); };
-  $("langClose").onclick = () => { langOverlay.style.display="none"; };
 
-  $("modeClose").onclick = () => { modeOverlay.style.display="none"; };
   document.querySelectorAll('#modeOverlay .choice[data-mode]').forEach(el => {
     el.addEventListener("click", () => {
       const m = el.getAttribute("data-mode");
       if (m && MODES[m]) {
         setMode(m);
         modeOverlay.style.display = "none";
-        runSplash().then(() => {
-          applyModeUI();
-          renderSessions(); renderBoards(); renderLibrary();
-        });
+        applyModeUI();
+        showView("tracker");
       }
     });
   });
-
-  // Buttons
-  btnChangeMode.onclick = () => modeOverlay.style.display = "flex";
-  btnChangeLang.onclick = () => langOverlay.style.display = "flex";
 
   // Profile
   nameEl.value = localStorage.getItem(KEY_NAME) || "";
@@ -1412,6 +1290,9 @@
     reader.readAsDataURL(file);
   };
 
+  btnChangeMode.onclick = () => openMode();
+  btnChangeLang.onclick = () => openLang();
+
   btnClear.onclick = () => {
     const lang = getLang() || "en";
     localStorage.removeItem(KEY_SESSIONS);
@@ -1428,13 +1309,14 @@
   }
   function validSpeedKmh(kmh){ return kmh >= 0 && kmh <= 300; }
 
-  let pointsCount = 0, sumAccuracy = 0, minAccuracy = Infinity, maxAccuracy = 0, startCoord=null, endCoord=null;
-
   btnStart.onclick = async () => {
     const lang = getLang() || "en";
-    if (!navigator.geolocation) { setStatus(i18n[lang].runtime.gpsError("Geolocation not available")); return; }
+    if (!navigator.geolocation) {
+      setStatus(i18n[lang].runtime.gpsError("Geolocation not available"));
+      return;
+    }
     const mode = getMode();
-    if (!mode) { modeOverlay.style.display="flex"; return; }
+    if (!mode) { openMode(); return; }
 
     preBestKmh = computeBest(mode);
     brokeRecord = false;
@@ -1458,6 +1340,7 @@
     btnSave.disabled = true;
 
     tickTimer = setInterval(() => {
+      if (!startedAt) return;
       const sec = Math.floor((Date.now()-startedAt)/1000);
       const mm = String(Math.floor(sec/60)).padStart(2,"0");
       const ss = String(sec%60).padStart(2,"0");
@@ -1477,7 +1360,7 @@
       if (!startCoord) startCoord = {lat, lon};
       endCoord = {lat, lon};
 
-      let curKmh = (typeof speed === "number") ? speed * 3.6 : NaN;
+      const curKmh = (typeof speed === "number") ? speed * 3.6 : NaN;
 
       if (lastPoint) {
         const d = haversine(lastPoint.lat, lastPoint.lon, lat, lon);
@@ -1519,6 +1402,7 @@
 
   btnStop.onclick = () => {
     const lang = getLang() || "en";
+
     if (watchId != null) navigator.geolocation.clearWatch(watchId);
     watchId = null;
     if (tickTimer) clearInterval(tickTimer);
@@ -1551,6 +1435,7 @@
 
   btnSave.onclick = () => {
     if (!startedAt) return;
+
     const lang = getLang() || "en";
     const endAt = Date.now();
     const durMs = endAt - startedAt;
@@ -1564,7 +1449,7 @@
       avatar: localStorage.getItem(KEY_AVATAR) || "",
       mode,
       when: nowStr(),
-      maxKmh: maxKmh,
+      maxKmh,
       distKm: distM / 1000,
       duration: durationStr(durMs),
       avgKmh: avg,
@@ -1593,21 +1478,40 @@
     showDrive(false);
   };
 
-  // Gauge arc init
+  // Gauge init
   try {
     arcLen = gaugeArc.getTotalLength();
     gaugeArc.style.strokeDasharray = `0 ${arcLen}`;
   } catch { arcLen = 0; }
 
-  // Close overlays when tapping outside
-  langOverlay.addEventListener("click", (e) => { if (e.target === langOverlay) langOverlay.style.display="none"; });
-  modeOverlay.addEventListener("click", (e) => { if (e.target === modeOverlay) modeOverlay.style.display="none"; });
+  // Overlay buttons
+  $("langClose").textContent = i18n[getLang() || "en"].btn.close;
+  $("modeClose").textContent = i18n[getLang() || "en"].btn.close;
+
+  // Boot
+  function boot(){
+    applyI18n();
+    updateProfileHeader();
+    showView("tracker");
+
+    if (!getLang()){
+      openLang();
+      return;
+    }
+    if (!getMode()){
+      openMode();
+      return;
+    }
+    applyModeUI();
+    renderSessions();
+    renderBoards();
+    renderLibrary();
+  }
 
   // Init profile
   nameEl.value = localStorage.getItem(KEY_NAME) || "";
   updateProfileHeader();
 
-  // Boot
   boot();
 })();
 </script>
