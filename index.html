@@ -2,8 +2,6 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-
-  <!-- Pantalla fija: sin zoom + mejor soporte iPhone -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -21,14 +19,13 @@
       --border:rgba(255,255,255,.10);
       --shadow: 0 18px 60px rgba(0,0,0,.45);
       --radius:18px;
-      --good:#36d399;
-      --bad:#fb7185;
-      --warn:#fbbf24;
-      --indigo:rgba(99,102,241,.85);
-      --green:rgba(34,197,94,.85);
+      --indigo:rgba(99,102,241,.90);
+      --green:rgba(34,197,94,.90);
+      --red:rgba(244,63,94,.92);
+      --amber:rgba(251,191,36,.92);
     }
 
-    /* Pantalla sólida: sin scroll/zoom/lateral global */
+    /* Fijo, sin zoom/scroll lateral */
     html, body{
       width:100%;
       height:100%;
@@ -39,38 +36,32 @@
       touch-action:manipulation;
       -webkit-text-size-adjust:100%;
       background:var(--bg);
+      color:var(--text);
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial;
     }
     body{
       background:
         radial-gradient(1200px 800px at 20% 10%, rgba(99,102,241,.22), transparent 55%),
         radial-gradient(1200px 800px at 80% 30%, rgba(34,197,94,.18), transparent 55%),
         var(--bg);
-      color:var(--text);
-      font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial;
     }
     *{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
 
-    .wrap{
-      max-width:980px;
+    /* Safe area iPhone */
+    .app{
       height:100%;
-      margin:0 auto;
-      padding:18px;
-      overflow:hidden;
+      padding:
+        calc(14px + env(safe-area-inset-top))
+        calc(14px + env(safe-area-inset-right))
+        calc(14px + env(safe-area-inset-bottom))
+        calc(14px + env(safe-area-inset-left));
       display:flex;
       flex-direction:column;
       gap:12px;
+      max-width:980px;
+      margin:0 auto;
     }
 
-    /* Scroll vertical SOLO dentro de la vista */
-    .view{
-      flex:1;
-      overflow-y:auto;
-      overflow-x:hidden;
-      -webkit-overflow-scrolling: touch;
-      padding-right:2px;
-    }
-
-    /* Top bar responsive */
     .topbar{
       display:flex;
       align-items:center;
@@ -85,14 +76,14 @@
       display:grid;place-items:center;box-shadow:var(--shadow);
       flex:0 0 auto;
     }
-    .title{line-height:1.1; min-width:0;}
+    .title{min-width:0; line-height:1.1;}
     .title h2{
       margin:0;
       font-size:18px;
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
-      max-width: 52vw;
+      max-width: 64vw;
     }
     .title .sub{
       margin:2px 0 0;
@@ -101,51 +92,34 @@
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
-      max-width: 52vw;
+      max-width: 64vw;
     }
 
-    /* Tabs (desktop) */
-    .tabs{
-      display:flex;
-      gap:10px;
-      background:var(--panel);
-      border:1px solid var(--border);
-      border-radius:999px;
-      padding:6px;
-      backdrop-filter: blur(10px);
-      box-shadow:0 10px 30px rgba(0,0,0,.25);
-      flex:0 0 auto;
-    }
-    .tab{
-      border:0;background:transparent;color:var(--muted);
-      padding:10px 14px;border-radius:999px;font-weight:900;cursor:pointer;
-      white-space:nowrap;
-    }
-    .tab.active{background:rgba(255,255,255,.12);color:var(--text)}
-
-    /* Mobile menu button */
-    .menuBtn{
-      display:none;
-      border:1px solid var(--border);
-      background:var(--panel);
-      color:var(--text);
-      border-radius:14px;
-      padding:10px 12px;
-      font-weight:1000;
-      box-shadow:0 10px 30px rgba(0,0,0,.25);
-      cursor:pointer;
-      flex:0 0 auto;
+    .pill{
+      display:inline-flex;align-items:center;gap:10px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      padding:8px 10px;border-radius:999px
     }
 
-    @media (max-width: 720px){
-      .tabs{ display:none; }
-      .menuBtn{ display:inline-flex; align-items:center; gap:10px; }
-      .title h2, .title .sub{ max-width: 60vw; }
+    .avatar{
+      width:34px;height:34px;border-radius:12px;
+      background:rgba(255,255,255,.10);
+      overflow:hidden;display:grid;place-items:center
+    }
+    .avatar img{width:100%;height:100%;object-fit:cover;display:block}
+
+    .view{
+      flex:1;
+      overflow-y:auto;
+      overflow-x:hidden;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 92px; /* espacio para navbar */
     }
 
     .card{
       background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
-      border:1px solid var(--border);
+      border:1px solid rgba(255,255,255,.10);
       border-radius:var(--radius);
       padding:16px;
       margin:12px 0;
@@ -160,13 +134,13 @@
       border-radius:16px;
       padding:14px
     }
-    .kpi .v{font-size:30px;font-weight:1000;letter-spacing:.3px}
+    .kpi .v{font-size:30px;font-weight:1100;letter-spacing:.3px}
     .kpi .l{color:var(--muted2);font-size:12px;margin-top:4px}
 
     .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
     button{
       border:0;border-radius:14px;padding:12px 14px;
-      font-weight:1000;cursor:pointer;color:var(--text);
+      font-weight:1100;cursor:pointer;color:var(--text);
       background:#1f2141; border:1px solid rgba(255,255,255,.10)
     }
     button:disabled{opacity:.5;cursor:not-allowed}
@@ -175,19 +149,6 @@
     .ghost{background:rgba(255,255,255,.06)}
     .small{color:var(--muted2);font-size:13px;line-height:1.35;margin:10px 0 0}
     .status{margin-top:10px;color:var(--muted);font-size:13px}
-
-    .pill{
-      display:inline-flex;align-items:center;gap:10px;
-      background:rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.10);
-      padding:8px 10px;border-radius:999px
-    }
-    .avatar{
-      width:34px;height:34px;border-radius:12px;
-      background:rgba(255,255,255,.10);
-      overflow:hidden;display:grid;place-items:center
-    }
-    .avatar img{width:100%;height:100%;object-fit:cover;display:block}
 
     input[type="text"]{
       width:100%;padding:12px;border-radius:14px;
@@ -204,9 +165,59 @@
     .split{display:grid;grid-template-columns: 1fr;gap:12px}
     @media (min-width: 900px){ .split{grid-template-columns: 1.2fr .8fr;} }
 
+    /* Bottom Nav (NO se corta jamás) */
+    .nav{
+      position:fixed;
+      left:0; right:0;
+      bottom:0;
+      padding:
+        10px
+        calc(10px + env(safe-area-inset-right))
+        calc(10px + env(safe-area-inset-bottom))
+        calc(10px + env(safe-area-inset-left));
+      display:flex;
+      justify-content:center;
+      z-index:20;
+      pointer-events:none;
+    }
+    .navInner{
+      width:min(980px, 100%);
+      background:rgba(10,10,20,.72);
+      border:1px solid rgba(255,255,255,.12);
+      backdrop-filter: blur(14px);
+      border-radius:20px;
+      box-shadow:0 25px 80px rgba(0,0,0,.55);
+      display:flex;
+      gap:8px;
+      padding:8px;
+      pointer-events:auto;
+    }
+    .navBtn{
+      flex:1;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:4px;
+      border-radius:16px;
+      padding:10px 6px;
+      background:transparent;
+      border:0;
+      color:rgba(255,255,255,.70);
+      font-weight:1100;
+      cursor:pointer;
+    }
+    .navBtn .ico{font-size:18px; line-height:1;}
+    .navBtn .txt{font-size:11px; letter-spacing:.02em;}
+    .navBtn.active{
+      background:rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.10);
+      color:#fff;
+    }
+
     /* Overlays */
     .overlay{
-      position:fixed;inset:0;
+      position:fixed; inset:0;
       background:rgba(0,0,0,.65);
       backdrop-filter: blur(10px);
       display:none;
@@ -223,13 +234,10 @@
       box-shadow:0 25px 80px rgba(0,0,0,.55);
       padding:16px
     }
-
     .choices{display:grid;grid-template-columns:1fr;gap:10px;margin-top:10px}
     @media (min-width: 520px){ .choices{grid-template-columns:1fr 1fr;} }
-
     .choices3{display:grid;grid-template-columns:1fr;gap:10px;margin-top:10px}
     @media (min-width: 520px){ .choices3{grid-template-columns:1fr 1fr 1fr;} }
-
     .choice{
       background:rgba(0,0,0,.22);
       border:1px solid rgba(255,255,255,.10);
@@ -239,41 +247,20 @@
     }
     .choice:hover{border-color:rgba(99,102,241,.55)}
     .choice .ico{font-size:22px}
-    .choice .name{font-weight:1000;margin-top:6px}
+    .choice .name{font-weight:1100;margin-top:6px}
     .choice .hint{color:var(--muted2);font-size:12px;margin-top:4px}
     .right{display:flex;gap:10px;align-items:center;justify-content:flex-end;margin-top:12px}
     .dangerNote{color:rgba(251,191,36,.95);font-size:12px;margin-top:10px}
-
-    /* Mobile nav overlay (fix for cut tabs) */
-    .navList{display:flex; flex-direction:column; gap:10px; margin-top:12px;}
-    .navItem{
-      display:flex; align-items:center; justify-content:space-between; gap:12px;
-      padding:12px;
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(0,0,0,.18);
-      cursor:pointer;
-      font-weight:1000;
-    }
-    .navItem:hover{border-color:rgba(99,102,241,.55)}
-    .navItem .left{display:flex; align-items:center; gap:10px;}
-    .tag{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:6px 10px;
-      border-radius:999px;
-      background:rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.10);
-      color:var(--muted);
-      font-size:12px;
-      font-weight:1000;
-      letter-spacing:.04em;
-    }
 
     /* Drive screen */
     #driveScreen{
       display:none;
       position:fixed; inset:0; z-index:100;
-      padding:18px;
+      padding:
+        calc(14px + env(safe-area-inset-top))
+        calc(14px + env(safe-area-inset-right))
+        calc(14px + env(safe-area-inset-bottom))
+        calc(14px + env(safe-area-inset-left));
       background:
         radial-gradient(900px 600px at 30% 10%, rgba(99,102,241,.25), transparent 55%),
         radial-gradient(900px 600px at 80% 35%, rgba(34,197,94,.18), transparent 55%),
@@ -298,8 +285,8 @@
       transform: translateY(16px);
       pointer-events:none;
     }
-    .speedBig .n{font-size:64px; font-weight:1100; letter-spacing:.5px; line-height:1;}
-    .speedBig .u{color:var(--muted2); font-weight:1000; letter-spacing:.12em; text-transform:uppercase; font-size:12px; margin-top:6px;}
+    .speedBig .n{font-size:64px; font-weight:1200; letter-spacing:.5px; line-height:1;}
+    .speedBig .u{color:var(--muted2); font-weight:1100; letter-spacing:.12em; text-transform:uppercase; font-size:12px; margin-top:6px;}
 
     .slideBox{
       position:relative;
@@ -312,7 +299,7 @@
     .slideHint{
       color:var(--muted2);
       font-size:12px;
-      font-weight:1000;
+      font-weight:1100;
       letter-spacing:.08em;
       text-transform:uppercase;
       margin-bottom:10px;
@@ -343,53 +330,6 @@
       opacity:.55;
       pointer-events:none;
     }
-
-    /* Record overlay */
-    #recordOverlay{
-      display:none;
-      position:fixed; inset:0; z-index:200;
-      background:
-        radial-gradient(900px 600px at 30% 15%, rgba(34,197,94,.25), transparent 55%),
-        radial-gradient(900px 600px at 75% 35%, rgba(99,102,241,.25), transparent 55%),
-        rgba(2,2,10,.92);
-      backdrop-filter: blur(12px);
-      padding:18px;
-      overflow:hidden;
-    }
-    .recordCard{
-      max-width:740px; margin:0 auto;
-      height:100%;
-      display:flex; flex-direction:column; justify-content:center; gap:14px;
-    }
-    .recordHero{
-      background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
-      border:1px solid rgba(255,255,255,.12);
-      border-radius:24px;
-      padding:18px;
-      box-shadow:0 25px 90px rgba(0,0,0,.55);
-      position:relative;
-      overflow:hidden;
-    }
-    .recordTitle{font-weight:1100; font-size:18px; letter-spacing:.04em}
-    .recordBig{font-size:64px; font-weight:1200; margin-top:6px; line-height:1}
-    .recordSub{color:var(--muted2); margin-top:6px}
-    .spark{
-      position:absolute; inset:-60px;
-      background: conic-gradient(from 180deg, rgba(34,197,94,.0), rgba(34,197,94,.18), rgba(99,102,241,.18), rgba(34,197,94,.0));
-      filter: blur(18px);
-      animation: spin 5.5s linear infinite;
-      opacity:.8;
-    }
-    @keyframes spin { to{ transform: rotate(360deg);} }
-    .confetti{position:absolute; inset:0; pointer-events:none; overflow:hidden;}
-    .confetti i{
-      position:absolute; top:-20px;
-      width:10px; height:18px;
-      border-radius:4px;
-      animation: fall 2.4s linear infinite;
-      opacity:.85;
-    }
-    @keyframes fall{ to{ transform: translateY(110vh) rotate(420deg); opacity:.95; } }
 
     /* Splash */
     #splash{
@@ -429,7 +369,7 @@
     }
     .splashUnit{
       color:var(--muted2);
-      font-weight:1000;
+      font-weight:1100;
       letter-spacing:.12em;
       text-transform:uppercase;
       font-size:12px;
@@ -450,11 +390,68 @@
       border-radius:999px;
       box-shadow: 0 18px 60px rgba(0,0,0,.35);
     }
+
+    /* Record overlay */
+    #recordOverlay{
+      display:none;
+      position:fixed; inset:0; z-index:200;
+      background:
+        radial-gradient(900px 600px at 30% 15%, rgba(34,197,94,.25), transparent 55%),
+        radial-gradient(900px 600px at 75% 35%, rgba(99,102,241,.25), transparent 55%),
+        rgba(2,2,10,.92);
+      backdrop-filter: blur(12px);
+      padding:18px;
+      overflow:hidden;
+    }
+    .recordCard{
+      max-width:740px; margin:0 auto;
+      height:100%;
+      display:flex; flex-direction:column; justify-content:center; gap:14px;
+    }
+    .recordHero{
+      background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:24px;
+      padding:18px;
+      box-shadow:0 25px 90px rgba(0,0,0,.55);
+      position:relative;
+      overflow:hidden;
+    }
+    .recordTitle{font-weight:1200; font-size:18px; letter-spacing:.04em}
+    .recordBig{font-size:64px; font-weight:1300; margin-top:6px; line-height:1}
+    .recordSub{color:var(--muted2); margin-top:6px}
+    .spark{
+      position:absolute; inset:-60px;
+      background: conic-gradient(from 180deg, rgba(34,197,94,.0), rgba(34,197,94,.18), rgba(99,102,241,.18), rgba(34,197,94,.0));
+      filter: blur(18px);
+      animation: spin 5.5s linear infinite;
+      opacity:.8;
+    }
+    @keyframes spin { to{ transform: rotate(360deg);} }
+    .confetti{position:absolute; inset:0; pointer-events:none; overflow:hidden;}
+    .confetti i{
+      position:absolute; top:-20px;
+      width:10px; height:18px;
+      border-radius:4px;
+      animation: fall 2.4s linear infinite;
+      opacity:.85;
+    }
+    @keyframes fall{ to{ transform: translateY(110vh) rotate(420deg); opacity:.95; } }
+
+    .devBox{
+      display:flex; gap:12px; align-items:flex-start;
+      padding:14px;
+      background:rgba(0,0,0,.18);
+      border:1px dashed rgba(251,191,36,.55);
+      border-radius:18px;
+    }
+    .devBox .ico{font-size:26px; line-height:1;}
+    .devBox .t{font-weight:1200;}
   </style>
 </head>
 
 <body>
-  <div class="wrap">
+  <div class="app">
     <div class="topbar">
       <div class="brand">
         <div class="logo" id="modeIcon">🏁</div>
@@ -464,19 +461,16 @@
         </div>
       </div>
 
-      <!-- Desktop tabs -->
-      <div class="tabs" aria-label="Navigation">
-        <button class="tab active" id="tabTracker">Tracker</button>
-        <button class="tab" id="tabBoard">Leaderboard</button>
-        <button class="tab" id="tabLibrary">Library</button>
-        <button class="tab" id="tabGlobal">Global</button>
+      <div class="pill">
+        <div class="avatar" id="avatarBox">🙂</div>
+        <div style="min-width:0">
+          <div style="font-weight:1200; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:34vw" id="whoLine">No name</div>
+          <div style="color:var(--muted2); font-size:12px" id="modeLine">Mode: —</div>
+        </div>
       </div>
-
-      <!-- Mobile menu -->
-      <button class="menuBtn" id="openNav">☰ <span id="menuLabel">Menu</span></button>
     </div>
 
-    <!-- Views -->
+    <!-- VIEWS -->
     <div id="viewTracker" class="view">
       <div class="split">
         <div class="card">
@@ -498,15 +492,10 @@
         </div>
 
         <div class="card">
-          <div class="row" style="align-items:center;justify-content:space-between">
-            <div class="pill">
-              <div class="avatar" id="avatarBox">🙂</div>
-              <div>
-                <div style="font-weight:1000" id="whoLine">No name</div>
-                <div style="color:var(--muted2);font-size:12px" id="modeLine">Mode: —</div>
-              </div>
-            </div>
+          <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap">
             <button class="ghost" id="btnChangeMode">Change mode</button>
+            <button class="ghost" id="btnChangeLang">Language</button>
+            <button class="ghost" id="btnClear">Clear history</button>
           </div>
 
           <div style="margin-top:12px">
@@ -517,11 +506,6 @@
           <div style="margin-top:12px">
             <div class="small" id="lblPhoto">Profile photo (stored on this device):</div>
             <input id="photo" type="file" accept="image/*" />
-          </div>
-
-          <div class="btns">
-            <button class="ghost" id="btnClear">Clear history</button>
-            <button class="ghost" id="btnChangeLang">Language</button>
           </div>
 
           <p class="small" id="lblLocalOnly">Data is stored locally on this device.</p>
@@ -585,7 +569,7 @@
     <div id="viewLibrary" class="view" style="display:none">
       <div class="card">
         <h3 style="margin:0 0 6px" id="hdrLibrary">Library</h3>
-        <p class="small" id="libraryNote">Session details saved on this device.</p>
+        <p class="small" id="libraryNote">Sessions saved on this device.</p>
       </div>
 
       <div class="card">
@@ -597,48 +581,24 @@
     <div id="viewGlobal" class="view" style="display:none">
       <div class="card">
         <h3 style="margin:0 0 6px" id="hdrGlobalTab">Global</h3>
-        <div class="card" style="margin:12px 0 0; border-style:dashed; border-color:rgba(251,191,36,.55)">
-          <div style="font-size:26px">🚧</div>
-          <div style="font-weight:1100; margin-top:6px" id="globalDevTitle">Under development</div>
-          <div class="small" id="globalDevText">This section is currently in development.</div>
+        <div class="devBox">
+          <div class="ico">🚧</div>
+          <div>
+            <div class="t" id="globalDevTitle">Under development</div>
+            <div class="small" id="globalDevText">This section is currently in development.</div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Mobile Nav Overlay -->
-  <div class="overlay" id="navOverlay">
-    <div class="modal">
-      <div class="pill">
-        <div class="logo" style="width:40px;height:40px;border-radius:14px">☰</div>
-        <div>
-          <div style="font-weight:1100" id="navTitle">Menu</div>
-          <div style="color:var(--muted2);font-size:12px" id="navSub">Navigation</div>
-        </div>
-      </div>
-
-      <div class="navList">
-        <div class="navItem" data-nav="tracker">
-          <div class="left"><span class="tag">🏁</span><span id="navTracker">Tracker</span></div>
-          <span>›</span>
-        </div>
-        <div class="navItem" data-nav="board">
-          <div class="left"><span class="tag">🏆</span><span id="navBoard">Leaderboard</span></div>
-          <span>›</span>
-        </div>
-        <div class="navItem" data-nav="library">
-          <div class="left"><span class="tag">📚</span><span id="navLibrary">Library</span></div>
-          <span>›</span>
-        </div>
-        <div class="navItem" data-nav="global">
-          <div class="left"><span class="tag">🌍</span><span id="navGlobal">Global</span></div>
-          <span>›</span>
-        </div>
-      </div>
-
-      <div class="right">
-        <button class="ghost" id="navClose">Close</button>
-      </div>
+  <!-- Bottom Nav -->
+  <div class="nav">
+    <div class="navInner">
+      <button class="navBtn active" id="navTracker"><div class="ico">🏁</div><div class="txt" id="navTrackerTxt">Tracker</div></button>
+      <button class="navBtn" id="navBoard"><div class="ico">🏆</div><div class="txt" id="navBoardTxt">Leaderboard</div></button>
+      <button class="navBtn" id="navLibrary"><div class="ico">📚</div><div class="txt" id="navLibraryTxt">Library</div></button>
+      <button class="navBtn" id="navGlobal"><div class="ico">🌍</div><div class="txt" id="navGlobalTxt">Global</div></button>
     </div>
   </div>
 
@@ -662,7 +622,7 @@
           <div class="pill">
             <div class="logo" id="driveIcon" style="width:40px;height:40px;border-radius:14px">🛴</div>
             <div>
-              <div style="font-weight:1000" id="driveModeLabel">Mode</div>
+              <div style="font-weight:1200" id="driveModeLabel">Mode</div>
               <div style="color:var(--muted2);font-size:12px" id="driveStatus">GPS</div>
             </div>
           </div>
@@ -716,7 +676,7 @@
       <div class="pill" style="justify-content:flex-start;gap:10px">
         <div class="logo" style="width:40px;height:40px;border-radius:14px">🌍</div>
         <div>
-          <div style="font-weight:1100;font-size:15px" id="langTitle">Choose language</div>
+          <div style="font-weight:1200;font-size:15px" id="langTitle">Choose language</div>
           <div style="color:var(--muted2);font-size:12px" id="langSub">Saved for next time</div>
         </div>
       </div>
@@ -746,7 +706,7 @@
       <div class="pill" style="justify-content:flex-start;gap:10px">
         <div class="logo" style="width:40px;height:40px;border-radius:14px">⚙️</div>
         <div>
-          <div style="font-weight:1100;font-size:15px" id="modePickTitle">Choose mode</div>
+          <div style="font-weight:1200;font-size:15px" id="modePickTitle">Choose mode</div>
           <div style="color:var(--muted2);font-size:12px" id="modePickSub">Saved for next time</div>
         </div>
       </div>
@@ -795,7 +755,7 @@
         </div>
 
         <div style="position:relative; z-index:2; margin-top:10px">
-          <div class="recordBig"><span id="recSpeed">--</span> <span style="font-size:18px; color:var(--muted2); font-weight:1000">km/h</span></div>
+          <div class="recordBig"><span id="recSpeed">--</span> <span style="font-size:18px; color:var(--muted2); font-weight:1100">km/h</span></div>
           <div class="recordSub"><span id="recBefore">Before:</span> <b id="recPrev">--</b> km/h</div>
         </div>
 
@@ -817,28 +777,29 @@
 
 <script>
 (() => {
-  const KEY_SESSIONS = "speed_sessions_v7";
+  // Storage keys
+  const KEY_SESSIONS = "speed_sessions_v8";
   const KEY_MODE = "speed_mode_v1";
   const KEY_NAME = "speed_name_v1";
   const KEY_AVATAR = "speed_avatar_v1";
   const KEY_LANG = "speed_lang_v1";
 
+  // Modes
   const MODES = {
     scooter: { es:"Patinete", en:"Scooter", icon:"🛴", title_es:"Patinete Tracker", title_en:"Scooter Tracker", sub_es:"Registro de sesiones y récords", sub_en:"Track sessions and records" },
     car:     { es:"Coche",    en:"Car",     icon:"🚗", title_es:"Coche Tracker",    title_en:"Car Tracker",    sub_es:"Registro de sesiones y récords", sub_en:"Track sessions and records" },
     moto:    { es:"Moto",     en:"Motorbike",icon:"🏍️",title_es:"Moto Tracker",     title_en:"Motorbike Tracker",sub_es:"Registro de sesiones y récords", sub_en:"Track sessions and records" }
   };
 
+  // i18n
   const i18n = {
     es: {
-      menu:"Menú",
-      tabs:{ tracker:"Tracker", board:"Marcador", library:"Biblioteca", global:"Global" },
-      nav:{ title:"Menú", sub:"Navegación", close:"Cerrar" },
+      nav:{ tracker:"Tracker", board:"Marcador", library:"Biblioteca", global:"Global" },
       kpi:{ cur:"Velocidad actual (km/h)", max:"Máxima (km/h)", dist:"Distancia (km)", time:"Tiempo" },
-      btn:{ start:"Iniciar", stop:"Parar", save:"Guardar sesión", clear:"Borrar historial", changeMode:"Cambiar modo", language:"Idioma", back:"Volver" },
+      btn:{ start:"Iniciar", stop:"Parar", save:"Guardar sesión", clear:"Borrar historial", changeMode:"Cambiar modo", language:"Idioma", back:"Volver", close:"Cerrar" },
       statusPrefix:"Estado:", statusReady:"Listo",
-      localOnly:"Los datos se guardan localmente en este dispositivo.",
       keepAwake:"⚠️ Si la pantalla se apaga: Ajustes → Pantalla y brillo → Bloqueo automático → Nunca (mientras uses la app).",
+      localOnly:"Los datos se guardan localmente en este dispositivo.",
       history:"Historial",
       th:{ date:"Fecha", mode:"Modo", max:"Máx (km/h)", dist:"Dist (km)", dur:"Tiempo", photo:"Foto", name:"Nombre", best:"Mejor máx (km/h)", when:"Fecha" },
       boardTitle:"Marcador",
@@ -867,14 +828,12 @@
       }
     },
     en: {
-      menu:"Menu",
-      tabs:{ tracker:"Tracker", board:"Leaderboard", library:"Library", global:"Global" },
-      nav:{ title:"Menu", sub:"Navigation", close:"Close" },
+      nav:{ tracker:"Tracker", board:"Leaderboard", library:"Library", global:"Global" },
       kpi:{ cur:"Current speed (km/h)", max:"Max (km/h)", dist:"Distance (km)", time:"Time" },
-      btn:{ start:"Start", stop:"Stop", save:"Save session", clear:"Clear history", changeMode:"Change mode", language:"Language", back:"Back" },
+      btn:{ start:"Start", stop:"Stop", save:"Save session", clear:"Clear history", changeMode:"Change mode", language:"Language", back:"Back", close:"Close" },
       statusPrefix:"Status:", statusReady:"Ready",
-      localOnly:"Data is stored locally on this device.",
       keepAwake:"⚠️ If the screen turns off: Settings → Display & Brightness → Auto-Lock → Never (while using the app).",
+      localOnly:"Data is stored locally on this device.",
       history:"History",
       th:{ date:"Date", mode:"Mode", max:"Max (km/h)", dist:"Dist (km)", dur:"Time", photo:"Photo", name:"Name", best:"Best max (km/h)", when:"Date" },
       boardTitle:"Leaderboard",
@@ -916,7 +875,6 @@
     localStorage.setItem(KEY_LANG, v);
     applyI18n();
   }
-
   function getMode(){
     const m = localStorage.getItem(KEY_MODE);
     return (m && MODES[m]) ? m : null;
@@ -925,7 +883,6 @@
     localStorage.setItem(KEY_MODE, m);
     applyModeUI();
   }
-
   function modeLabel(mode){
     const lang = getLang() || "en";
     return MODES[mode] ? (lang === "es" ? MODES[mode].es : MODES[mode].en) : (mode || "—");
@@ -938,14 +895,12 @@
   function saveSessions(list){
     localStorage.setItem(KEY_SESSIONS, JSON.stringify(list));
   }
-
   function durationStr(ms){
     const sec = Math.max(0, Math.floor(ms/1000));
     const mm = String(Math.floor(sec/60)).padStart(2,"0");
     const ss = String(sec%60).padStart(2,"0");
     return `${mm}:${ss}`;
   }
-
   function haversine(lat1, lon1, lat2, lon2) {
     const R = 6371000;
     const toRad = (x) => x * Math.PI / 180;
@@ -953,13 +908,11 @@
     const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
     return 2 * R * Math.asin(Math.sqrt(a));
   }
-
   function avgSpeedKmh(distM, durationMs){
     const hours = durationMs / 3600000;
     if (hours <= 0) return NaN;
     return (distM/1000) / hours;
   }
-
   function computeBest(mode){
     const list = loadSessions().filter(s => s.mode === mode);
     let best = 0;
@@ -969,7 +922,7 @@
     return best;
   }
 
-  /* Anti-zoom extra (iOS) */
+  /* Anti-zoom (iOS) extra */
   document.addEventListener("gesturestart", (e) => e.preventDefault(), {passive:false});
   document.addEventListener("gesturechange", (e) => e.preventDefault(), {passive:false});
   document.addEventListener("gestureend", (e) => e.preventDefault(), {passive:false});
@@ -1015,19 +968,17 @@
   const viewLibrary = $("viewLibrary");
   const viewGlobal = $("viewGlobal");
 
-  const tabTracker = $("tabTracker");
-  const tabBoard = $("tabBoard");
-  const tabLibrary = $("tabLibrary");
-  const tabGlobal = $("tabGlobal");
+  const navTracker = $("navTracker");
+  const navBoard = $("navBoard");
+  const navLibrary = $("navLibrary");
+  const navGlobal = $("navGlobal");
 
   const tblBody = $("tbl").querySelector("tbody");
   const tblGlobalBody = $("tblGlobal").querySelector("tbody");
   const tblByModeBody = $("tblByMode").querySelector("tbody");
 
-  // Mobile nav
-  const openNav = $("openNav");
-  const navOverlay = $("navOverlay");
-  const navClose = $("navClose");
+  const libraryList = $("libraryList");
+  const libraryEmpty = $("libraryEmpty");
 
   const langOverlay = $("langOverlay");
   const modeOverlay = $("modeOverlay");
@@ -1061,9 +1012,6 @@
   const recBack = $("recBack");
   const recSave = $("recSave");
 
-  const libraryList = $("libraryList");
-  const libraryEmpty = $("libraryEmpty");
-
   // State
   let watchId = null;
   let startedAt = null;
@@ -1090,54 +1038,34 @@
 
   function setStatus(s){ statusEl.textContent = s; }
 
-  function setTab(which){
-    [tabTracker,tabBoard,tabLibrary,tabGlobal].forEach(t => t.classList.remove("active"));
+  function showView(which){
     viewTracker.style.display = "none";
     viewBoard.style.display = "none";
     viewLibrary.style.display = "none";
     viewGlobal.style.display = "none";
 
-    if (which === "tracker"){ tabTracker.classList.add("active"); viewTracker.style.display=""; }
-    if (which === "board"){ tabBoard.classList.add("active"); viewBoard.style.display=""; renderBoards(); }
-    if (which === "library"){ tabLibrary.classList.add("active"); viewLibrary.style.display=""; renderLibrary(); }
-    if (which === "global"){ tabGlobal.classList.add("active"); viewGlobal.style.display=""; }
+    [navTracker,navBoard,navLibrary,navGlobal].forEach(b => b.classList.remove("active"));
+
+    if (which === "tracker"){ viewTracker.style.display=""; navTracker.classList.add("active"); }
+    if (which === "board"){ viewBoard.style.display=""; navBoard.classList.add("active"); renderBoards(); }
+    if (which === "library"){ viewLibrary.style.display=""; navLibrary.classList.add("active"); renderLibrary(); }
+    if (which === "global"){ viewGlobal.style.display=""; navGlobal.classList.add("active"); }
   }
 
-  tabTracker.onclick = () => setTab("tracker");
-  tabBoard.onclick = () => setTab("board");
-  tabLibrary.onclick = () => setTab("library");
-  tabGlobal.onclick = () => setTab("global");
-
-  openNav.onclick = () => navOverlay.style.display = "flex";
-  navClose.onclick = () => navOverlay.style.display = "none";
-  navOverlay.addEventListener("click", (e) => { if (e.target === navOverlay) navOverlay.style.display="none"; });
-  navOverlay.querySelectorAll("[data-nav]").forEach(el => {
-    el.addEventListener("click", () => {
-      const v = el.getAttribute("data-nav");
-      navOverlay.style.display="none";
-      setTab(v);
-    });
-  });
+  navTracker.onclick = () => showView("tracker");
+  navBoard.onclick = () => showView("board");
+  navLibrary.onclick = () => showView("library");
+  navGlobal.onclick = () => showView("global");
 
   function applyI18n(){
     const lang = getLang() || "en";
     const D = i18n[lang];
     document.documentElement.lang = lang;
 
-    $("menuLabel").textContent = D.menu;
-
-    $("tabTracker").textContent = D.tabs.tracker;
-    $("tabBoard").textContent = D.tabs.board;
-    $("tabLibrary").textContent = D.tabs.library;
-    $("tabGlobal").textContent = D.tabs.global;
-
-    $("navTitle").textContent = D.nav.title;
-    $("navSub").textContent = D.nav.sub;
-    $("navClose").textContent = D.nav.close;
-    $("navTracker").textContent = D.tabs.tracker;
-    $("navBoard").textContent = D.tabs.board;
-    $("navLibrary").textContent = D.tabs.library;
-    $("navGlobal").textContent = D.tabs.global;
+    $("navTrackerTxt").textContent = D.nav.tracker;
+    $("navBoardTxt").textContent = D.nav.board;
+    $("navLibraryTxt").textContent = D.nav.library;
+    $("navGlobalTxt").textContent = D.nav.global;
 
     $("lblCur").textContent = D.kpi.cur;
     $("lblMax").textContent = D.kpi.max;
@@ -1246,24 +1174,6 @@
     renderLibrary();
   }
 
-  function renderTime(){
-    if (!startedAt){ timEl.textContent="--:--"; return; }
-    const sec = Math.floor((Date.now()-startedAt)/1000);
-    const mm = String(Math.floor(sec/60)).padStart(2,"0");
-    const ss = String(sec%60).padStart(2,"0");
-    timEl.textContent = `${mm}:${ss}`;
-  }
-
-  function updateKpis(curKmh){
-    spdEl.textContent = fmt(curKmh, 1);
-    maxEl.textContent = fmt(maxKmh, 1);
-    dstEl.textContent = fmt(distM/1000, 2);
-  }
-
-  function validSpeedKmh(kmh){
-    return kmh >= 0 && kmh <= 300;
-  }
-
   function renderSessions(){
     const list = loadSessions().slice().reverse();
     tblBody.innerHTML = "";
@@ -1282,7 +1192,6 @@
 
   function renderBoards(){
     const lang = getLang() || "en";
-    const D = i18n[lang];
     const list = loadSessions().slice();
 
     const sorted = list.slice().sort((a,b) => (b.maxKmh||0) - (a.maxKmh||0));
@@ -1328,25 +1237,23 @@
     libraryEmpty.style.display = list.length ? "none" : "block";
 
     for (const s of list){
-      const icon = MODES[s.mode]?.icon || "🏁";
       const avg = Number.isFinite(s.avgKmh) ? s.avgKmh.toFixed(1) : "--";
       const acc = Number.isFinite(s.avgAccM) ? Math.round(s.avgAccM) : "--";
-
       const div = document.createElement("div");
-      div.className = "navItem";
+      div.className = "card";
+      div.style.margin = "0";
       div.innerHTML = `
-        <div class="left">
-          <span class="tag">${icon}</span>
-          <span>
-            <b>${s.when}</b><br/>
-            <span style="color:var(--muted2); font-weight:800; font-size:12px">
-              ${modeLabel(s.mode)} · max ${fmt(s.maxKmh,1)} · ${fmt(s.distKm,2)} km · ${s.duration} · avg ${avg} · acc ~${acc}m
-            </span>
-          </span>
+        <div style="display:flex; justify-content:space-between; gap:10px; align-items:flex-start;">
+          <div style="min-width:0">
+            <div style="font-weight:1200">${s.when}</div>
+            <div class="small" style="margin-top:6px">
+              ${modeLabel(s.mode)} · max <b>${fmt(s.maxKmh,1)}</b> km/h · ${fmt(s.distKm,2)} km · ${s.duration}<br/>
+              avg <b>${avg}</b> km/h · acc ~<b>${acc}</b> m
+            </div>
+          </div>
+          <div class="logo" style="width:40px;height:40px;border-radius:14px">${(MODES[s.mode]?.icon||"🏁")}</div>
         </div>
-        <span>›</span>
       `;
-      div.onclick = () => alert(`${s.when}\n${modeLabel(s.mode)}\nMax: ${fmt(s.maxKmh,1)} km/h\nDist: ${fmt(s.distKm,2)} km\nTime: ${s.duration}`);
       libraryList.appendChild(div);
     }
   }
@@ -1430,13 +1337,11 @@
     const tick = (t0) => {
       const p = Math.min(1, (t0 - start) / durMs);
       const eased = 1 - Math.pow(1 - p, 3);
-      const val = Math.round(target * eased);
-      splashNum.textContent = String(val);
+      splashNum.textContent = String(Math.round(target * eased));
       splashFill.style.width = (eased * 100).toFixed(1) + "%";
       if (p < 1) requestAnimationFrame(tick);
     };
     requestAnimationFrame(tick);
-
     await new Promise(r => setTimeout(r, 1050));
     splash.style.display = "none";
   }
@@ -1444,6 +1349,7 @@
   function boot(){
     applyI18n();
     updateProfileHeader();
+    showView("tracker");
 
     if (!getLang()){
       langOverlay.style.display = "flex";
@@ -1455,16 +1361,17 @@
     }
     runSplash().then(() => {
       applyModeUI();
-      setTab("tracker");
+      renderSessions();
+      renderBoards();
+      renderLibrary();
     });
   }
 
-  // Language modal
+  // Modals
   $("pickEs").onclick = () => { setLang("es"); langOverlay.style.display="none"; boot(); };
   $("pickEn").onclick = () => { setLang("en"); langOverlay.style.display="none"; boot(); };
   $("langClose").onclick = () => { langOverlay.style.display="none"; };
 
-  // Mode modal
   $("modeClose").onclick = () => { modeOverlay.style.display="none"; };
   document.querySelectorAll('#modeOverlay .choice[data-mode]').forEach(el => {
     el.addEventListener("click", () => {
@@ -1474,12 +1381,13 @@
         modeOverlay.style.display = "none";
         runSplash().then(() => {
           applyModeUI();
-          setTab("tracker");
+          renderSessions(); renderBoards(); renderLibrary();
         });
       }
     });
   });
 
+  // Buttons
   btnChangeMode.onclick = () => modeOverlay.style.display = "flex";
   btnChangeLang.onclick = () => langOverlay.style.display = "flex";
 
@@ -1518,6 +1426,9 @@
     dstEl.textContent="--";
     timEl.textContent="--:--";
   }
+  function validSpeedKmh(kmh){ return kmh >= 0 && kmh <= 300; }
+
+  let pointsCount = 0, sumAccuracy = 0, minAccuracy = Infinity, maxAccuracy = 0, startCoord=null, endCoord=null;
 
   btnStart.onclick = async () => {
     const lang = getLang() || "en";
@@ -1608,7 +1519,6 @@
 
   btnStop.onclick = () => {
     const lang = getLang() || "en";
-
     if (watchId != null) navigator.geolocation.clearWatch(watchId);
     watchId = null;
     if (tickTimer) clearInterval(tickTimer);
@@ -1683,18 +1593,21 @@
     showDrive(false);
   };
 
+  // Gauge arc init
   try {
     arcLen = gaugeArc.getTotalLength();
     gaugeArc.style.strokeDasharray = `0 ${arcLen}`;
   } catch { arcLen = 0; }
 
-  // Init UI + modals
+  // Close overlays when tapping outside
+  langOverlay.addEventListener("click", (e) => { if (e.target === langOverlay) langOverlay.style.display="none"; });
+  modeOverlay.addEventListener("click", (e) => { if (e.target === modeOverlay) modeOverlay.style.display="none"; });
+
+  // Init profile
   nameEl.value = localStorage.getItem(KEY_NAME) || "";
   updateProfileHeader();
 
-  $("langOverlay").addEventListener("click", (e) => { if (e.target === $("langOverlay")) $("langOverlay").style.display="none"; });
-  $("modeOverlay").addEventListener("click", (e) => { if (e.target === $("modeOverlay")) $("modeOverlay").style.display="none"; });
-
+  // Boot
   boot();
 })();
 </script>
