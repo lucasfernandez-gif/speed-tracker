@@ -2,48 +2,43 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <!-- Sin zoom y pantalla estable -->
+  <!-- Pantalla fija: sin zoom -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
   <title>Speed Tracker</title>
 
   <style>
     :root{
       --bg:#070711;
-      --text:#ffffff;
-      --muted:rgba(255,255,255,.72);
+      --text:#fff;
+      --muted:rgba(255,255,255,.70);
       --muted2:rgba(255,255,255,.55);
       --panel:rgba(255,255,255,.06);
       --panel2:rgba(0,0,0,.18);
       --border:rgba(255,255,255,.10);
-      --shadow: 0 18px 60px rgba(0,0,0,.45);
-      --radius:18px;
+      --shadow:0 18px 60px rgba(0,0,0,.45);
+      --r:18px;
     }
-
     html, body{
-      width:100%;
-      height:100%;
-      margin:0;
-      padding:0;
+      width:100%; height:100%;
+      margin:0; padding:0;
       overflow:hidden;
       overscroll-behavior:none;
       touch-action:manipulation;
       -webkit-text-size-adjust:100%;
       background:var(--bg);
+      color:var(--text);
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
     }
     body{
       background:
         radial-gradient(1200px 800px at 20% 10%, rgba(99,102,241,.22), transparent 55%),
         radial-gradient(1200px 800px at 80% 30%, rgba(34,197,94,.18), transparent 55%),
         var(--bg);
-      color:var(--text);
-      font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial;
     }
-    *{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+    *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 
-    /* Safe area iPhone + layout */
     .wrap{
       max-width:980px;
       height:100%;
@@ -60,10 +55,7 @@
     }
 
     .topbar{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
       min-height:54px;
     }
     .brand{display:flex;align-items:center;gap:10px; min-width:0;}
@@ -73,63 +65,55 @@
       display:grid;place-items:center;box-shadow:var(--shadow);
       flex:0 0 auto;
     }
-    .title{line-height:1.1; min-width:0;}
+    .title{min-width:0; line-height:1.1;}
     .title h2{
-      margin:0;
-      font-size:18px;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      max-width: 56vw;
+      margin:0; font-size:18px;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+      max-width:56vw;
     }
     .title .sub{
       margin:2px 0 0;
-      color:var(--muted2);
-      font-size:12px;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      max-width: 56vw;
+      color:var(--muted2); font-size:12px;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+      max-width:56vw;
     }
 
     .pill{
-      display:inline-flex;align-items:center;gap:10px;
+      display:inline-flex; align-items:center; gap:10px;
       background:rgba(255,255,255,.06);
       border:1px solid rgba(255,255,255,.10);
-      padding:8px 10px;border-radius:999px
+      padding:8px 10px; border-radius:999px;
     }
     .avatar{
       width:34px;height:34px;border-radius:12px;
       background:rgba(255,255,255,.10);
-      overflow:hidden;display:grid;place-items:center
+      overflow:hidden;display:grid;place-items:center;
     }
     .avatar img{width:100%;height:100%;object-fit:cover;display:block}
 
-    /* Vista con scroll vertical interno */
     .view{
       flex:1;
       overflow-y:auto;
       overflow-x:hidden;
-      -webkit-overflow-scrolling: touch;
-      padding-bottom: 92px; /* espacio para nav inferior */
+      -webkit-overflow-scrolling:touch;
+      padding-bottom: 92px; /* nav */
     }
 
     .card{
       background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
       border:1px solid rgba(255,255,255,.10);
-      border-radius:var(--radius);
+      border-radius:var(--r);
       padding:16px;
       margin:12px 0;
       box-shadow:var(--shadow);
     }
-
     .row{display:flex;gap:12px;flex-wrap:wrap}
     .kpi{
       flex:1 1 170px;
       background:var(--panel2);
       border:1px solid rgba(255,255,255,.08);
       border-radius:16px;
-      padding:14px
+      padding:14px;
     }
     .kpi .v{font-size:30px;font-weight:1100;letter-spacing:.3px}
     .kpi .l{color:var(--muted2);font-size:12px;margin-top:4px}
@@ -138,7 +122,7 @@
     button{
       border:0;border-radius:14px;padding:12px 14px;
       font-weight:1100;cursor:pointer;color:var(--text);
-      background:#1f2141; border:1px solid rgba(255,255,255,.10)
+      background:#1f2141; border:1px solid rgba(255,255,255,.10);
     }
     button:disabled{opacity:.5;cursor:not-allowed}
     .start{background:linear-gradient(135deg, rgba(34,197,94,.95), rgba(16,185,129,.85)); border:0}
@@ -151,7 +135,7 @@
       width:100%;padding:12px;border-radius:14px;
       border:1px solid rgba(255,255,255,.10);
       background:rgba(0,0,0,.22);
-      color:var(--text);outline:none
+      color:var(--text);outline:none;
     }
     input[type="file"]{width:100%}
 
@@ -159,50 +143,36 @@
     th,td{padding:10px 8px;border-bottom:1px solid rgba(255,255,255,.10);text-align:left;font-size:14px;vertical-align:middle}
     th{color:var(--muted2);font-size:12px;text-transform:uppercase;letter-spacing:.08em}
 
-    .split{display:grid;grid-template-columns: 1fr;gap:12px}
-    @media (min-width: 900px){ .split{grid-template-columns: 1.2fr .8fr;} }
+    .split{display:grid;grid-template-columns:1fr;gap:12px}
+    @media (min-width:900px){ .split{grid-template-columns:1.2fr .8fr;} }
 
-    /* Nav inferior (NO se corta) */
+    /* Nav inferior */
     .nav{
       position:fixed;
-      left:0; right:0;
-      bottom:0;
+      left:0; right:0; bottom:0;
       padding:
         10px
         calc(10px + env(safe-area-inset-right))
         calc(10px + env(safe-area-inset-bottom))
         calc(10px + env(safe-area-inset-left));
-      display:flex;
-      justify-content:center;
-      z-index:40;
-      pointer-events:none;
+      display:flex; justify-content:center;
+      z-index:40; pointer-events:none;
     }
     .navInner{
       width:min(980px, 100%);
       background:rgba(10,10,20,.72);
       border:1px solid rgba(255,255,255,.12);
-      backdrop-filter: blur(14px);
+      backdrop-filter:blur(14px);
       border-radius:20px;
       box-shadow:0 25px 80px rgba(0,0,0,.55);
-      display:flex;
-      gap:8px;
-      padding:8px;
+      display:flex; gap:8px; padding:8px;
       pointer-events:auto;
     }
     .navBtn{
-      flex:1;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      gap:4px;
-      border-radius:16px;
-      padding:10px 6px;
-      background:transparent;
-      border:0;
-      color:rgba(255,255,255,.70);
-      font-weight:1100;
-      cursor:pointer;
+      flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+      gap:4px; border-radius:16px; padding:10px 6px;
+      background:transparent; border:0;
+      color:rgba(255,255,255,.70); font-weight:1100; cursor:pointer;
     }
     .navBtn .ico{font-size:18px; line-height:1;}
     .navBtn .txt{font-size:11px; letter-spacing:.02em;}
@@ -216,12 +186,12 @@
     .overlay{
       position:fixed; inset:0;
       background:rgba(0,0,0,.65);
-      backdrop-filter: blur(10px);
+      backdrop-filter:blur(10px);
       display:none;
       align-items:center;
       justify-content:center;
       padding:18px;
-      z-index:100
+      z-index:100;
     }
     .modal{
       max-width:720px;width:100%;
@@ -229,18 +199,18 @@
       border:1px solid rgba(255,255,255,.12);
       border-radius:22px;
       box-shadow:0 25px 80px rgba(0,0,0,.55);
-      padding:16px
+      padding:16px;
     }
     .choices{display:grid;grid-template-columns:1fr;gap:10px;margin-top:10px}
-    @media (min-width: 520px){ .choices{grid-template-columns:1fr 1fr;} }
+    @media (min-width:520px){ .choices{grid-template-columns:1fr 1fr;} }
     .choices3{display:grid;grid-template-columns:1fr;gap:10px;margin-top:10px}
-    @media (min-width: 520px){ .choices3{grid-template-columns:1fr 1fr 1fr;} }
+    @media (min-width:520px){ .choices3{grid-template-columns:1fr 1fr 1fr;} }
     .choice{
       background:rgba(0,0,0,.22);
       border:1px solid rgba(255,255,255,.10);
       border-radius:18px;
       padding:12px;
-      cursor:pointer
+      cursor:pointer;
     }
     .choice:hover{border-color:rgba(99,102,241,.55)}
     .choice .ico{font-size:22px}
@@ -249,10 +219,11 @@
     .right{display:flex;gap:10px;align-items:center;justify-content:flex-end;margin-top:12px}
     .dangerNote{color:rgba(251,191,36,.95);font-size:12px;margin-top:10px}
 
-    /* Pantalla de conducción */
+    /* Drive Screen (medición) */
     #driveScreen{
       display:none;
-      position:fixed; inset:0; z-index:150;
+      position:fixed; inset:0;
+      z-index:150;
       padding:
         calc(14px + env(safe-area-inset-top))
         calc(14px + env(safe-area-inset-right))
@@ -261,14 +232,31 @@
       background:
         radial-gradient(900px 600px at 30% 10%, rgba(99,102,241,.25), transparent 55%),
         radial-gradient(900px 600px at 80% 35%, rgba(34,197,94,.18), transparent 55%),
-        rgba(2,2,10,.90);
-      backdrop-filter: blur(10px);
+        rgba(2,2,10,.92);
+      backdrop-filter: blur(12px);
       overflow:hidden;
     }
-    .gaugeWrap{display:flex; justify-content:center; margin-top:10px;}
+    .driveCard{
+      height:100%;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      padding:16px;
+      border-radius:22px;
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow:0 25px 90px rgba(0,0,0,.55);
+    }
+    .driveTop{
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+    }
+
     .gauge{
-      width:min(520px, 100%);
-      height:260px;
+      flex:1;
+      min-height:260px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
       position:relative;
       background:rgba(0,0,0,.18);
       border:1px solid rgba(255,255,255,.10);
@@ -278,20 +266,38 @@
     }
     .speedBig{
       position:absolute; inset:0;
-      display:flex; flex-direction:column; align-items:center; justify-content:center;
-      transform: translateY(16px);
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
       pointer-events:none;
     }
-    .speedBig .n{font-size:64px; font-weight:1200; letter-spacing:.5px; line-height:1;}
-    .speedBig .u{color:var(--muted2); font-weight:1100; letter-spacing:.12em; text-transform:uppercase; font-size:12px; margin-top:6px;}
+    .speedBig .n{font-size:72px; font-weight:1300; letter-spacing:.4px; line-height:1;}
+    .speedBig .u{color:var(--muted2); font-weight:1100; letter-spacing:.12em; text-transform:uppercase; font-size:12px; margin-top:8px;}
+    .gMini{
+      position:absolute;
+      top:14px; left:14px;
+      display:flex; gap:8px; flex-wrap:wrap;
+    }
+    .tag{
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      font-size:12px;
+      color:rgba(255,255,255,.82);
+      font-weight:1100;
+    }
 
-    .slideBox{
-      position:relative;
+    .driveKpis{display:flex; gap:10px; flex-wrap:wrap;}
+    .driveKpis .kpi{margin:0; flex:1 1 140px;}
+
+    /* Slider SIEMPRE abajo */
+    .driveBottom{
+      margin-top:auto;
       background:rgba(0,0,0,.20);
       border:1px solid rgba(255,255,255,.12);
       border-radius:18px;
-      padding:14px 14px 12px;
-      overflow:hidden;
+      padding:14px;
+      position:relative;
     }
     .slideHint{
       color:var(--muted2);
@@ -313,68 +319,22 @@
     .slideInput::-webkit-slider-thumb{
       -webkit-appearance:none;
       appearance:none;
-      width:54px;
+      width:56px;
       height:34px;
       border-radius:16px;
       background:linear-gradient(135deg, rgba(244,63,94,.95), rgba(251,113,133,.85));
       border:1px solid rgba(255,255,255,.18);
-      box-shadow: 0 18px 60px rgba(0,0,0,.35);
+      box-shadow:0 18px 60px rgba(0,0,0,.35);
     }
     .slideArrow{
       position:absolute;
-      right:14px; top:50%;
-      transform:translateY(10px);
+      right:14px;
+      bottom:18px;
       opacity:.55;
       pointer-events:none;
     }
 
-    /* Pantalla de récord */
-    #recordOverlay{
-      display:none;
-      position:fixed; inset:0; z-index:200;
-      background:
-        radial-gradient(900px 600px at 30% 15%, rgba(34,197,94,.25), transparent 55%),
-        radial-gradient(900px 600px at 75% 35%, rgba(99,102,241,.25), transparent 55%),
-        rgba(2,2,10,.92);
-      backdrop-filter: blur(12px);
-      padding:18px;
-      overflow:hidden;
-    }
-    .recordCard{
-      max-width:740px; margin:0 auto;
-      height:100%;
-      display:flex; flex-direction:column; justify-content:center; gap:14px;
-    }
-    .recordHero{
-      background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
-      border:1px solid rgba(255,255,255,.12);
-      border-radius:24px;
-      padding:18px;
-      box-shadow:0 25px 90px rgba(0,0,0,.55);
-      position:relative;
-      overflow:hidden;
-    }
-    .recordTitle{font-weight:1200; font-size:18px; letter-spacing:.04em}
-    .recordBig{font-size:64px; font-weight:1300; margin-top:6px; line-height:1}
-    .recordSub{color:var(--muted2); margin-top:6px}
-    .spark{
-      position:absolute; inset:-60px;
-      background: conic-gradient(from 180deg, rgba(34,197,94,.0), rgba(34,197,94,.18), rgba(99,102,241,.18), rgba(34,197,94,.0));
-      filter: blur(18px);
-      animation: spin 5.5s linear infinite;
-      opacity:.8;
-    }
-    @keyframes spin { to{ transform: rotate(360deg);} }
-    .confetti{position:absolute; inset:0; pointer-events:none; overflow:hidden;}
-    .confetti i{
-      position:absolute; top:-20px;
-      width:10px; height:18px;
-      border-radius:4px;
-      animation: fall 2.4s linear infinite;
-      opacity:.85;
-    }
-    @keyframes fall{ to{ transform: translateY(110vh) rotate(420deg); opacity:.95; } }
-
+    /* Global dev box */
     .devBox{
       display:flex; gap:12px; align-items:flex-start;
       padding:14px;
@@ -426,6 +386,7 @@
 
           <div class="status"><span id="lblStatusPrefix">Status:</span> <span id="status">Ready</span></div>
           <p class="small" id="keepAwakeNote">If the screen turns off: Settings → Display & Brightness → Auto-Lock → Never (while using the app).</p>
+          <p class="small" id="gpsTip"></p>
         </div>
 
         <div class="card">
@@ -541,55 +502,41 @@
 
   <!-- Drive screen -->
   <div id="driveScreen">
-    <div class="card" style="height:100%; display:flex; flex-direction:column; justify-content:space-between;">
-      <div>
-        <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px;">
-          <div class="pill">
-            <div class="logo" id="driveIcon" style="width:40px;height:40px;border-radius:14px">🛴</div>
-            <div>
-              <div style="font-weight:1200" id="driveModeLabel">Mode</div>
-              <div style="color:var(--muted2);font-size:12px" id="driveStatus">GPS</div>
-            </div>
-          </div>
-
-          <button class="ghost" id="driveBack">Back</button>
-        </div>
-
-        <div class="gaugeWrap">
-          <div class="gauge">
-            <svg viewBox="0 0 220 140" width="100%" height="100%">
-              <path d="M20 120 A90 90 0 0 1 200 120" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="16" stroke-linecap="round"/>
-              <path id="gaugeArc" d="M20 120 A90 90 0 0 1 200 120" fill="none" stroke="rgba(99,102,241,.85)" stroke-width="16" stroke-linecap="round"
-                    stroke-dasharray="0 9999" />
-              <g transform="translate(110,120)">
-                <g id="needleGroup" transform="rotate(-110)">
-                  <line x1="0" y1="0" x2="0" y2="-78" stroke="white" stroke-width="4" stroke-linecap="round" />
-                </g>
-                <circle cx="0" cy="0" r="7" fill="white" />
-              </g>
-            </svg>
-
-            <div class="speedBig">
-              <div class="n" id="driveSpeed">--</div>
-              <div class="u">km/h</div>
-            </div>
+    <div class="driveCard">
+      <div class="driveTop">
+        <div class="pill">
+          <div class="logo" id="driveIcon" style="width:40px;height:40px;border-radius:14px">🛴</div>
+          <div>
+            <div style="font-weight:1200" id="driveModeLabel">Mode</div>
+            <div style="color:var(--muted2);font-size:12px" id="driveStatus">GPS</div>
           </div>
         </div>
+        <button class="ghost" id="driveBack">Back</button>
+      </div>
 
-        <div class="row" style="margin-top:12px">
-          <div class="kpi"><div class="v" id="driveMax">--</div><div class="l" id="driveLblMax">Max</div></div>
-          <div class="kpi"><div class="v" id="driveDist">--</div><div class="l" id="driveLblDist">Distance (km)</div></div>
-          <div class="kpi"><div class="v" id="driveTime">--:--</div><div class="l" id="driveLblTime">Time</div></div>
-          <div class="kpi"><div class="v" id="driveAcc">--</div><div class="l" id="driveLblAcc">Accuracy (m)</div></div>
+      <div class="gauge">
+        <div class="gMini">
+          <div class="tag" id="tagAcc">Acc: -- m</div>
+          <div class="tag" id="tagSrc">SRC: --</div>
+          <div class="tag" id="tagSmooth">Smooth</div>
+        </div>
+        <div class="speedBig">
+          <div class="n" id="driveSpeed">--</div>
+          <div class="u" id="driveUnit">KM/H</div>
         </div>
       </div>
 
-      <div style="margin-top:14px">
-        <div class="slideBox">
-          <div class="slideHint" id="slideHint">Slide to stop</div>
-          <input id="slideStop" class="slideInput" type="range" min="0" max="100" value="0" />
-          <div class="slideArrow">➡️</div>
-        </div>
+      <div class="driveKpis">
+        <div class="kpi"><div class="v" id="driveMax">--</div><div class="l" id="driveLblMax">Max</div></div>
+        <div class="kpi"><div class="v" id="driveDist">--</div><div class="l" id="driveLblDist">Distance (km)</div></div>
+        <div class="kpi"><div class="v" id="driveTime">--:--</div><div class="l" id="driveLblTime">Time</div></div>
+      </div>
+
+      <!-- SLIDER FIJO (SIEMPRE) -->
+      <div class="driveBottom">
+        <div class="slideHint" id="slideHint">Slide to stop</div>
+        <input id="slideStop" class="slideInput" type="range" min="0" max="100" value="0" />
+        <div class="slideArrow">➡️</div>
         <div class="small" style="margin-top:10px" id="slideTip"></div>
       </div>
     </div>
@@ -664,55 +611,18 @@
     </div>
   </div>
 
-  <!-- Record overlay -->
-  <div id="recordOverlay">
-    <div class="recordCard">
-      <div class="recordHero">
-        <div class="spark"></div>
-        <div class="confetti" id="confetti"></div>
-
-        <div class="pill" style="position:relative; z-index:2">
-          <div class="logo" id="recIcon" style="width:40px;height:40px;border-radius:14px">🏁</div>
-          <div>
-            <div class="recordTitle" id="recTitle">NEW RECORD!</div>
-            <div class="recordSub" id="recModeLine">Mode: —</div>
-          </div>
-        </div>
-
-        <div style="position:relative; z-index:2; margin-top:10px">
-          <div class="recordBig"><span id="recSpeed">--</span> <span style="font-size:18px; color:var(--muted2); font-weight:1100">km/h</span></div>
-          <div class="recordSub"><span id="recBefore">Before:</span> <b id="recPrev">--</b> km/h</div>
-        </div>
-
-        <div class="row" style="position:relative; z-index:2; margin-top:12px">
-          <div class="kpi"><div class="v" id="recDist">--</div><div class="l" id="recLblDist">Distance (km)</div></div>
-          <div class="kpi"><div class="v" id="recTime">--:--</div><div class="l" id="recLblTime">Time</div></div>
-          <div class="kpi"><div class="v" id="recAvg">--</div><div class="l" id="recLblAvg">Estimated avg</div></div>
-        </div>
-
-        <div class="btns" style="position:relative; z-index:2">
-          <button class="ghost" id="recBack">Back</button>
-          <button class="start" id="recSave">Save session</button>
-        </div>
-
-        <div class="small" style="position:relative; z-index:2" id="recNote"></div>
-      </div>
-    </div>
-  </div>
-
 <script>
 (() => {
-  // Storage keys
-  const KEY_SESSIONS = "speed_sessions_ok_v1";
+  const KEY_SESSIONS = "speed_sessions_ok_v2";
   const KEY_MODE = "speed_mode_v1";
   const KEY_NAME = "speed_name_v1";
   const KEY_AVATAR = "speed_avatar_v1";
   const KEY_LANG = "speed_lang_v1";
 
   const MODES = {
-    scooter: { es:"Patinete", en:"Scooter", icon:"🛴", title_es:"Patinete Tracker", title_en:"Scooter Tracker", sub_es:"Registro de sesiones y récords", sub_en:"Track sessions and records" },
-    car:     { es:"Coche",    en:"Car",     icon:"🚗", title_es:"Coche Tracker",    title_en:"Car Tracker",    sub_es:"Registro de sesiones y récords", sub_en:"Track sessions and records" },
-    moto:    { es:"Moto",     en:"Motorbike",icon:"🏍️",title_es:"Moto Tracker",     title_en:"Motorbike Tracker",sub_es:"Registro de sesiones y récords", sub_en:"Track sessions and records" }
+    scooter: { es:"Patinete", en:"Scooter", icon:"🛴", title_es:"Patinete Tracker", title_en:"Scooter Tracker" },
+    car:     { es:"Coche",    en:"Car",     icon:"🚗", title_es:"Coche Tracker",    title_en:"Car Tracker" },
+    moto:    { es:"Moto",     en:"Motorbike",icon:"🏍️",title_es:"Moto Tracker",     title_en:"Motorbike Tracker" }
   };
 
   const i18n = {
@@ -724,20 +634,17 @@
       keepAwake:"⚠️ Si la pantalla se apaga: Ajustes → Pantalla y brillo → Bloqueo automático → Nunca (mientras uses la app).",
       localOnly:"Los datos se guardan localmente en este dispositivo.",
       history:"Historial",
-      th:{ date:"Fecha", mode:"Modo", max:"Máx (km/h)", dist:"Dist (km)", dur:"Tiempo", photo:"Foto", name:"Nombre", best:"Mejor máx (km/h)", when:"Fecha" },
+      th:{ date:"Fecha", mode:"Modo", max:"Máx (km/h)", dist:"Dist (km)", dur:"Tiempo", photo:"Foto", name:"Nombre" },
       boardTitle:"Marcador",
       boardNote:"Clasificaciones basadas en sesiones guardadas en este dispositivo.",
-      globalLocal:"Global local",
-      byMode:"Por modo",
       libraryTitle:"Biblioteca",
       libraryNote:"Sesiones guardadas en este dispositivo.",
       libraryEmpty:"No hay sesiones guardadas.",
       yourName:"Nombre:",
       photo:"Foto de perfil (se guarda en este dispositivo):",
-      drive:{ max:"Máxima", dist:"Distancia (km)", time:"Tiempo", acc:"Precisión (m)", slide:"Desliza para parar", tip:"Desliza hasta el final para parar. Si no, vuelve a 0." },
+      drive:{ max:"Máxima", dist:"Distancia (km)", time:"Tiempo", slide:"Desliza para parar", tip:"Desliza hasta el final para parar. Si no, vuelve a 0." },
       lang:{ title:"Elige idioma", sub:"Se guardará para la próxima vez", close:"Cerrar" },
       mode:{ title:"Elige modo", sub:"Se guarda para la próxima vez", q:"¿Qué se está usando?", safety:"Conduce de forma responsable y respeta la normativa.", close:"Cerrar" },
-      rec:{ title:"¡NUEVO RÉCORD!", before:"Antes:", dist:"Distancia (km)", time:"Tiempo", avg:"Media estimada", note:"Aparece al superar el mejor registro anterior y finalizar la sesión.", back:"Volver" },
       globalDevTitle:"En desarrollo",
       globalDevText:"Esta sección está actualmente en desarrollo.",
       alerts:{ photoBig:"La foto pesa mucho. Elige una más pequeña (menos de ~1.2MB)." },
@@ -748,7 +655,8 @@
         gpsError:(m)=>`Error GPS: ${m}`,
         histCleared:"Historial borrado.",
         saved:"Guardado ✅"
-      }
+      },
+      gpsTip:"Consejo: en iPhone, usa Safari y permite Ubicación. Si estás quieto, la velocidad puede tardar unos segundos en estabilizarse."
     },
     en: {
       nav:{ tracker:"Tracker", board:"Leaderboard", library:"Library", global:"Global" },
@@ -758,20 +666,17 @@
       keepAwake:"⚠️ If the screen turns off: Settings → Display & Brightness → Auto-Lock → Never (while using the app).",
       localOnly:"Data is stored locally on this device.",
       history:"History",
-      th:{ date:"Date", mode:"Mode", max:"Max (km/h)", dist:"Dist (km)", dur:"Time", photo:"Photo", name:"Name", best:"Best max (km/h)", when:"Date" },
+      th:{ date:"Date", mode:"Mode", max:"Max (km/h)", dist:"Dist (km)", dur:"Time", photo:"Photo", name:"Name" },
       boardTitle:"Leaderboard",
       boardNote:"Rankings based on sessions saved on this device.",
-      globalLocal:"Local global",
-      byMode:"By mode",
       libraryTitle:"Library",
       libraryNote:"Sessions saved on this device.",
       libraryEmpty:"No saved sessions.",
       yourName:"Your name:",
       photo:"Profile photo (stored on this device):",
-      drive:{ max:"Max", dist:"Distance (km)", time:"Time", acc:"Accuracy (m)", slide:"Slide to stop", tip:"Slide all the way to stop. Otherwise it resets to 0." },
+      drive:{ max:"Max", dist:"Distance (km)", time:"Time", slide:"Slide to stop", tip:"Slide all the way to stop. Otherwise it resets to 0." },
       lang:{ title:"Choose language", sub:"Saved for next time", close:"Close" },
       mode:{ title:"Choose mode", sub:"Saved for next time", q:"What is being used?", safety:"Ride responsibly and follow local laws.", close:"Close" },
-      rec:{ title:"NEW RECORD!", before:"Before:", dist:"Distance (km)", time:"Time", avg:"Estimated avg", note:"Shown when the previous best is beaten and the session ends.", back:"Back" },
       globalDevTitle:"Under development",
       globalDevText:"This section is currently in development.",
       alerts:{ photoBig:"Photo is too large. Pick a smaller one (under ~1.2MB)." },
@@ -782,7 +687,8 @@
         gpsError:(m)=>`GPS error: ${m}`,
         histCleared:"History cleared.",
         saved:"Saved ✅"
-      }
+      },
+      gpsTip:"Tip: on iPhone, use Safari and allow Location. When standing still, speed may take a few seconds to stabilize."
     }
   };
 
@@ -794,18 +700,14 @@
     const v = localStorage.getItem(KEY_LANG);
     return (v === "en" || v === "es") ? v : null;
   }
-  function setLang(v){
-    localStorage.setItem(KEY_LANG, v);
-    applyI18n();
-  }
+  function setLang(v){ localStorage.setItem(KEY_LANG, v); applyI18n(); }
+
   function getMode(){
     const m = localStorage.getItem(KEY_MODE);
     return (m && MODES[m]) ? m : null;
   }
-  function setMode(m){
-    localStorage.setItem(KEY_MODE, m);
-    applyModeUI();
-  }
+  function setMode(m){ localStorage.setItem(KEY_MODE, m); applyModeUI(); }
+
   function modeLabel(mode){
     const lang = getLang() || "en";
     return MODES[mode] ? (lang === "es" ? MODES[mode].es : MODES[mode].en) : (mode || "—");
@@ -815,15 +717,15 @@
     try { return JSON.parse(localStorage.getItem(KEY_SESSIONS) || "[]"); }
     catch { return []; }
   }
-  function saveSessions(list){
-    localStorage.setItem(KEY_SESSIONS, JSON.stringify(list));
-  }
+  function saveSessions(list){ localStorage.setItem(KEY_SESSIONS, JSON.stringify(list)); }
+
   function durationStr(ms){
     const sec = Math.max(0, Math.floor(ms/1000));
     const mm = String(Math.floor(sec/60)).padStart(2,"0");
     const ss = String(sec%60).padStart(2,"0");
     return `${mm}:${ss}`;
   }
+
   function haversine(lat1, lon1, lat2, lon2) {
     const R = 6371000;
     const toRad = (x) => x * Math.PI / 180;
@@ -831,11 +733,13 @@
     const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
     return 2 * R * Math.asin(Math.sqrt(a));
   }
+
   function avgSpeedKmh(distM, durationMs){
     const hours = durationMs / 3600000;
     if (hours <= 0) return NaN;
     return (distM/1000) / hours;
   }
+
   function computeBest(mode){
     const list = loadSessions().filter(s => s.mode === mode);
     let best = 0;
@@ -870,6 +774,7 @@
   // Elements
   const spdEl = $("spd"), maxEl = $("max"), dstEl = $("dst"), timEl = $("tim");
   const statusEl = $("status");
+
   const btnStart = $("btnStart"), btnStop = $("btnStop"), btnSave = $("btnSave");
   const btnClear = $("btnClear");
   const btnChangeMode = $("btnChangeMode");
@@ -885,6 +790,8 @@
   const modeTitle = $("modeTitle");
   const modeSub = $("modeSub");
 
+  const gpsTip = $("gpsTip");
+
   const viewTracker = $("viewTracker");
   const viewBoard = $("viewBoard");
   const viewLibrary = $("viewLibrary");
@@ -897,13 +804,13 @@
 
   const tblBody = $("tbl").querySelector("tbody");
   const tblGlobalBody = $("tblGlobal").querySelector("tbody");
-  const tblByModeBody = $("tblByMode").querySelector("tbody");
   const libraryList = $("libraryList");
   const libraryEmpty = $("libraryEmpty");
 
   const langOverlay = $("langOverlay");
   const modeOverlay = $("modeOverlay");
 
+  // Drive
   const driveScreen = $("driveScreen");
   const driveIcon = $("driveIcon");
   const driveModeLabel = $("driveModeLabel");
@@ -912,46 +819,25 @@
   const driveMax = $("driveMax");
   const driveDist = $("driveDist");
   const driveTime = $("driveTime");
-  const driveAcc = $("driveAcc");
   const slideStop = $("slideStop");
-  const needleGroup = $("needleGroup");
-  const gaugeArc = $("gaugeArc");
-
-  const recordOverlay = $("recordOverlay");
-  const confetti = $("confetti");
-  const recIcon = $("recIcon");
-  const recModeLine = $("recModeLine");
-  const recSpeed = $("recSpeed");
-  const recPrev = $("recPrev");
-  const recDist = $("recDist");
-  const recTime = $("recTime");
-  const recAvg = $("recAvg");
-  const recBack = $("recBack");
-  const recSave = $("recSave");
+  const driveBack = $("driveBack");
+  const tagAcc = $("tagAcc");
+  const tagSrc = $("tagSrc");
+  const tagSmooth = $("tagSmooth");
 
   // State
   let watchId = null;
   let startedAt = null;
-  let lastPoint = null;
-  let maxKmh = 0;
-  let distM = 0;
   let tickTimer = null;
 
-  let pointsCount = 0;
-  let sumAccuracy = 0;
-  let minAccuracy = Infinity;
-  let maxAccuracy = 0;
-  let startCoord = null;
-  let endCoord = null;
+  let lastPoint = null;      // {lat, lon, tMs}
+  let distM = 0;
+  let maxKmh = 0;
 
-  let preBestKmh = 0;
-  let brokeRecord = false;
-
-  let gaugeTarget = 0;
-  let gaugeShown = 0;
-  let gaugeRaf = null;
-  let arcLen = 0;
-  const maxGauge = 120;
+  // Mejoras velocidad:
+  let emaKmh = null;         // suavizado
+  const EMA_ALPHA = 0.20;    // 0.15-0.25 va bien
+  let srcLabel = "--";
 
   function setStatus(s){ statusEl.textContent = s; }
 
@@ -960,6 +846,7 @@
     viewBoard.style.display = "none";
     viewLibrary.style.display = "none";
     viewGlobal.style.display = "none";
+
     [navTracker,navBoard,navLibrary,navGlobal].forEach(b => b.classList.remove("active"));
 
     if (which === "tracker"){ viewTracker.style.display=""; navTracker.classList.add("active"); }
@@ -967,7 +854,6 @@
     if (which === "library"){ viewLibrary.style.display=""; navLibrary.classList.add("active"); renderLibrary(); }
     if (which === "global"){ viewGlobal.style.display=""; navGlobal.classList.add("active"); }
   }
-
   navTracker.onclick = () => showView("tracker");
   navBoard.onclick = () => showView("board");
   navLibrary.onclick = () => showView("library");
@@ -1010,8 +896,6 @@
 
     $("hdrBoard").textContent = D.boardTitle;
     $("boardNote").textContent = D.boardNote;
-    $("hdrGlobalLocal").textContent = D.globalLocal;
-    $("hdrByMode").textContent = D.byMode;
 
     $("hdrLibrary").textContent = D.libraryTitle;
     $("libraryNote").textContent = D.libraryNote;
@@ -1023,10 +907,9 @@
     $("driveLblMax").textContent = D.drive.max;
     $("driveLblDist").textContent = D.drive.dist;
     $("driveLblTime").textContent = D.drive.time;
-    $("driveLblAcc").textContent = D.drive.acc;
+
     $("slideHint").textContent = D.drive.slide;
     $("slideTip").textContent = D.drive.tip;
-    $("driveBack").textContent = D.btn.back;
 
     $("langTitle").textContent = D.lang.title;
     $("langSub").textContent = D.lang.sub;
@@ -1038,15 +921,6 @@
     $("modeSafety").textContent = D.mode.safety;
     $("modeClose").textContent = D.mode.close;
 
-    $("recTitle").textContent = D.rec.title;
-    $("recBefore").textContent = D.rec.before;
-    $("recLblDist").textContent = D.rec.dist;
-    $("recLblTime").textContent = D.rec.time;
-    $("recLblAvg").textContent = D.rec.avg;
-    $("recNote").textContent = D.rec.note;
-    recBack.textContent = D.rec.back;
-    recSave.textContent = D.btn.save;
-
     $("globalDevTitle").textContent = D.globalDevTitle;
     $("globalDevText").textContent = D.globalDevText;
 
@@ -1056,6 +930,8 @@
     $("modeScooterHint").textContent = (lang==="es") ? "Sesiones de patinete" : "Scooter sessions";
     $("modeCarHint").textContent = (lang==="es") ? "Sesiones de coche" : "Car sessions";
     $("modeMotoHint").textContent = (lang==="es") ? "Sesiones de moto" : "Motorbike sessions";
+
+    gpsTip.textContent = D.gpsTip;
   }
 
   function updateProfileHeader(){
@@ -1081,7 +957,7 @@
 
     modeIcon.textContent = MODES[m].icon;
     modeTitle.textContent = (lang==="es") ? MODES[m].title_es : MODES[m].title_en;
-    modeSub.textContent = (lang==="es") ? MODES[m].sub_es : MODES[m].sub_en;
+    modeSub.textContent = (lang==="es") ? "Registro de sesiones y récords" : "Track sessions and records";
     modeLine.textContent = (lang==="es") ? `Modo: ${modeLabel(m)}` : `Mode: ${modeLabel(m)}`;
 
     updateProfileHeader();
@@ -1127,24 +1003,6 @@
       `;
       tblGlobalBody.appendChild(tr);
     }
-
-    const best = { scooter:null, car:null, moto:null };
-    for (const s of list){
-      if (!best[s.mode] || (s.maxKmh||0) > (best[s.mode].maxKmh||0)){
-        best[s.mode] = s;
-      }
-    }
-    tblByModeBody.innerHTML = "";
-    for (const k of ["scooter","car","moto"]){
-      const s = best[k];
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${(MODES[k]?.icon||"🏁")} ${modeLabel(k)}</td>
-        <td>${s ? `<b>${fmt(s.maxKmh,1)}</b>` : "--"}</td>
-        <td>${s ? s.when : "--"}</td>
-      `;
-      tblByModeBody.appendChild(tr);
-    }
   }
 
   function renderLibrary(){
@@ -1154,7 +1012,6 @@
 
     for (const s of list){
       const avg = Number.isFinite(s.avgKmh) ? s.avgKmh.toFixed(1) : "--";
-      const acc = Number.isFinite(s.avgAccM) ? Math.round(s.avgAccM) : "--";
       const card = document.createElement("div");
       card.className = "card";
       card.style.margin = "0";
@@ -1164,7 +1021,7 @@
             <div style="font-weight:1200">${s.when}</div>
             <div class="small" style="margin-top:6px">
               ${modeLabel(s.mode)} · max <b>${fmt(s.maxKmh,1)}</b> km/h · ${fmt(s.distKm,2)} km · ${s.duration}<br/>
-              avg <b>${avg}</b> km/h · acc ~<b>${acc}</b> m
+              avg <b>${avg}</b> km/h
             </div>
           </div>
           <div class="logo" style="width:40px;height:40px;border-radius:14px">${(MODES[s.mode]?.icon||"🏁")}</div>
@@ -1173,78 +1030,6 @@
       libraryList.appendChild(card);
     }
   }
-
-  function showDrive(show){
-    driveScreen.style.display = show ? "block" : "none";
-    if (show) slideStop.value = "0";
-  }
-
-  $("driveBack").onclick = () => showDrive(false);
-
-  slideStop.addEventListener("input", () => {
-    const v = Number(slideStop.value || 0);
-    if (v >= 100) {
-      btnStop.click();
-      showDrive(false);
-      slideStop.value = "0";
-    }
-  });
-  slideStop.addEventListener("change", () => {
-    const v = Number(slideStop.value || 0);
-    if (v < 100) slideStop.value = "0";
-  });
-
-  function setGaugeSpeed(kmh){
-    const clamped = Math.max(0, Math.min(maxGauge, kmh));
-    gaugeTarget = clamped;
-
-    if (!gaugeRaf){
-      const step = () => {
-        gaugeShown += (gaugeTarget - gaugeShown) * 0.12;
-        const angle = (-110 + (gaugeShown / maxGauge) * 220);
-        needleGroup.setAttribute("transform", `rotate(${angle})`);
-
-        const frac = gaugeShown / maxGauge;
-        if (arcLen > 0) {
-          const drawn = Math.max(0, Math.min(arcLen, arcLen * frac));
-          gaugeArc.style.strokeDasharray = `${drawn} ${arcLen}`;
-        }
-
-        gaugeRaf = requestAnimationFrame(step);
-      };
-      gaugeRaf = requestAnimationFrame(step);
-    }
-  }
-
-  function updateDriveUI(curKmh, accM){
-    driveSpeed.textContent = Number.isFinite(curKmh) ? curKmh.toFixed(0) : "--";
-    driveMax.textContent = fmt(maxKmh, 1);
-    driveDist.textContent = fmt(distM / 1000, 2);
-    driveTime.textContent = timEl.textContent;
-    driveAcc.textContent = Number.isFinite(accM) ? String(Math.round(accM)) : "--";
-    setGaugeSpeed(Number.isFinite(curKmh) ? curKmh : 0);
-  }
-
-  function buildConfetti(){
-    confetti.innerHTML = "";
-    const n = 26;
-    for (let i=0;i<n;i++){
-      const p = document.createElement("i");
-      p.style.left = (Math.random()*100) + "%";
-      p.style.animationDelay = (Math.random()*0.9) + "s";
-      p.style.animationDuration = (1.8 + Math.random()*1.2) + "s";
-      p.style.width = (8 + Math.random()*10) + "px";
-      p.style.height = (10 + Math.random()*14) + "px";
-      p.style.background = (Math.random() > 0.5) ? "rgba(34,197,94,.75)" : "rgba(99,102,241,.75)";
-      confetti.appendChild(p);
-    }
-  }
-  function showRecord(show){
-    recordOverlay.style.display = show ? "block" : "none";
-    if (show) buildConfetti();
-  }
-  recBack.onclick = () => showRecord(false);
-  recSave.onclick = () => { btnSave.click(); showRecord(false); };
 
   // Modals
   function openLang(){ langOverlay.style.display = "flex"; }
@@ -1300,6 +1085,26 @@
     setStatus(i18n[lang].runtime.histCleared);
   };
 
+  // Drive screen + slider: SIEMPRE visible
+  function showDrive(show){
+    driveScreen.style.display = show ? "block" : "none";
+    if (show) slideStop.value = "0";
+  }
+  driveBack.onclick = () => showDrive(false);
+
+  slideStop.addEventListener("input", () => {
+    const v = Number(slideStop.value || 0);
+    if (v >= 100) {
+      btnStop.click();
+      showDrive(false);
+      slideStop.value = "0";
+    }
+  });
+  slideStop.addEventListener("change", () => {
+    const v = Number(slideStop.value || 0);
+    if (v < 100) slideStop.value = "0";
+  });
+
   // Tracking
   function resetSessionUI(){
     spdEl.textContent="--";
@@ -1308,6 +1113,19 @@
     timEl.textContent="--:--";
   }
   function validSpeedKmh(kmh){ return kmh >= 0 && kmh <= 300; }
+
+  function computeSpeedFromPoints(prev, cur){
+    // cur: {lat, lon, tMs}
+    const dt = (cur.tMs - prev.tMs) / 1000;
+    if (!Number.isFinite(dt) || dt <= 0) return NaN;
+    const d = haversine(prev.lat, prev.lon, cur.lat, cur.lon); // meters
+    // Si el GPS salta muchísimo en un punto, ignoramos esa velocidad:
+    if (d > 120) return NaN; // salto loco entre lecturas
+    const mps = d / dt;
+    return mps * 3.6;
+  }
+
+  let preBestKmh = 0;
 
   btnStart.onclick = async () => {
     const lang = getLang() || "en";
@@ -1319,19 +1137,21 @@
     if (!mode) { openMode(); return; }
 
     preBestKmh = computeBest(mode);
-    brokeRecord = false;
 
-    maxKmh = 0; distM = 0; lastPoint = null;
-    pointsCount = 0; sumAccuracy = 0; minAccuracy = Infinity; maxAccuracy = 0;
-    startCoord = null; endCoord = null;
+    // Reset estado
+    maxKmh = 0;
+    distM = 0;
+    lastPoint = null;
+    emaKmh = null;
+    srcLabel = "--";
 
+    // UI
     driveIcon.textContent = MODES[mode].icon;
     driveModeLabel.textContent = modeLabel(mode);
     driveStatus.textContent = lang==="es" ? "Pidiendo GPS…" : "Requesting GPS…";
     showDrive(true);
 
     setStatus(i18n[lang].runtime.askingGps);
-
     startedAt = Date.now();
     await requestWakeLock();
 
@@ -1350,37 +1170,68 @@
 
     watchId = navigator.geolocation.watchPosition((pos) => {
       const { latitude: lat, longitude: lon, speed, accuracy } = pos.coords;
+      const tMs = pos.timestamp ? Number(pos.timestamp) : Date.now();
 
-      pointsCount += 1;
-      if (Number.isFinite(accuracy)) {
-        sumAccuracy += accuracy;
-        minAccuracy = Math.min(minAccuracy, accuracy);
-        maxAccuracy = Math.max(maxAccuracy, accuracy);
-      }
-      if (!startCoord) startCoord = {lat, lon};
-      endCoord = {lat, lon};
+      const curPoint = { lat, lon, tMs };
 
-      const curKmh = (typeof speed === "number") ? speed * 3.6 : NaN;
-
+      // Distancia
       if (lastPoint) {
         const d = haversine(lastPoint.lat, lastPoint.lon, lat, lon);
         if (d <= 250) distM += d;
       }
-      lastPoint = { lat, lon, t: pos.timestamp };
 
-      if (Number.isFinite(curKmh) && validSpeedKmh(curKmh)) {
-        if (curKmh > maxKmh) maxKmh = curKmh;
+      // Velocidad: preferimos speed si viene, si no calculamos por puntos
+      let curKmh = NaN;
+      if (typeof speed === "number" && Number.isFinite(speed) && speed >= 0) {
+        curKmh = speed * 3.6;
+        srcLabel = "gps";
+      } else if (lastPoint) {
+        const calc = computeSpeedFromPoints(lastPoint, curPoint);
+        if (Number.isFinite(calc)) {
+          curKmh = calc;
+          srcLabel = "calc";
+        } else {
+          srcLabel = "wait";
+        }
+      } else {
+        srcLabel = "wait";
       }
-      if (!brokeRecord && maxKmh > (preBestKmh + 0.05)) brokeRecord = true;
 
-      spdEl.textContent = fmt(curKmh, 1);
+      // Suavizado EMA
+      let shownKmh = curKmh;
+      if (Number.isFinite(curKmh) && validSpeedKmh(curKmh)) {
+        if (emaKmh == null) emaKmh = curKmh;
+        emaKmh = (EMA_ALPHA * curKmh) + ((1-EMA_ALPHA) * emaKmh);
+        shownKmh = emaKmh;
+      } else {
+        // si no hay velocidad aún, mantenemos el último suavizado
+        shownKmh = (emaKmh == null) ? NaN : emaKmh;
+      }
+
+      // Max
+      if (Number.isFinite(shownKmh) && validSpeedKmh(shownKmh)) {
+        if (shownKmh > maxKmh) maxKmh = shownKmh;
+      }
+
+      // UI KPIs
+      spdEl.textContent = fmt(shownKmh, 1);
       maxEl.textContent = fmt(maxKmh, 1);
       dstEl.textContent = fmt(distM/1000, 2);
 
-      updateDriveUI(curKmh, accuracy);
+      // Drive UI
+      driveSpeed.textContent = Number.isFinite(shownKmh) ? shownKmh.toFixed(0) : "--";
+      driveMax.textContent = fmt(maxKmh, 1);
+      driveDist.textContent = fmt(distM/1000, 2);
 
-      setStatus(i18n[lang].runtime.recording(Math.round(accuracy)));
+      tagAcc.textContent = Number.isFinite(accuracy) ? `Acc: ${Math.round(accuracy)} m` : "Acc: -- m";
+      tagSrc.textContent = `SRC: ${srcLabel}`;
+      tagSmooth.textContent = `Smooth: ${Math.round(EMA_ALPHA*100)}%`;
+
+      setStatus(i18n[lang].runtime.recording(Number.isFinite(accuracy) ? Math.round(accuracy) : 0));
       driveStatus.textContent = lang==="es" ? "Grabando…" : "Recording…";
+
+      lastPoint = curPoint;
+
     }, (err) => {
       setStatus(i18n[lang].runtime.gpsError(err.message));
       driveStatus.textContent = i18n[lang].runtime.gpsError(err.message);
@@ -1395,16 +1246,16 @@
       releaseWakeLock();
     }, {
       enableHighAccuracy: true,
-      maximumAge: 1000,
+      maximumAge: 0,
       timeout: 15000
     });
   };
 
   btnStop.onclick = () => {
     const lang = getLang() || "en";
-
     if (watchId != null) navigator.geolocation.clearWatch(watchId);
     watchId = null;
+
     if (tickTimer) clearInterval(tickTimer);
     tickTimer = null;
 
@@ -1415,22 +1266,6 @@
     setStatus(i18n[lang].runtime.stopped);
     driveStatus.textContent = lang==="es" ? "Parada" : "Stopped";
     releaseWakeLock();
-
-    if (brokeRecord) {
-      const mode = getMode();
-      const durationMs = startedAt ? (Date.now() - startedAt) : 0;
-      const avg = avgSpeedKmh(distM, durationMs);
-
-      recIcon.textContent = MODES[mode].icon;
-      recModeLine.textContent = (lang==="es") ? `Modo: ${modeLabel(mode)}` : `Mode: ${modeLabel(mode)}`;
-      recSpeed.textContent = fmt(maxKmh, 1);
-      recPrev.textContent = fmt(preBestKmh, 1);
-      recDist.textContent = fmt(distM/1000, 2);
-      recTime.textContent = durationStr(durationMs);
-      recAvg.textContent = Number.isFinite(avg) ? avg.toFixed(1) : "--";
-
-      showRecord(true);
-    }
   };
 
   btnSave.onclick = () => {
@@ -1442,7 +1277,6 @@
 
     const mode = getMode();
     const avg = avgSpeedKmh(distM, durMs);
-    const avgAcc = (pointsCount > 0) ? (sumAccuracy / pointsCount) : NaN;
 
     const session = {
       who: (nameEl.value || "").trim(),
@@ -1452,15 +1286,7 @@
       maxKmh,
       distKm: distM / 1000,
       duration: durationStr(durMs),
-      avgKmh: avg,
-      pointsCount,
-      avgAccM: avgAcc,
-      minAccM: (minAccuracy === Infinity ? NaN : minAccuracy),
-      maxAccM: maxAccuracy,
-      startLat: startCoord ? startCoord.lat : null,
-      startLon: startCoord ? startCoord.lon : null,
-      endLat: endCoord ? endCoord.lat : null,
-      endLon: endCoord ? endCoord.lon : null
+      avgKmh: avg
     };
 
     const list = loadSessions();
@@ -1469,8 +1295,8 @@
 
     setStatus(i18n[lang].runtime.saved);
     btnSave.disabled = true;
-    startedAt = null;
 
+    startedAt = null;
     resetSessionUI();
     renderSessions();
     renderBoards();
@@ -1478,40 +1304,21 @@
     showDrive(false);
   };
 
-  // Gauge init
-  try {
-    arcLen = gaugeArc.getTotalLength();
-    gaugeArc.style.strokeDasharray = `0 ${arcLen}`;
-  } catch { arcLen = 0; }
-
-  // Overlay buttons
-  $("langClose").textContent = i18n[getLang() || "en"].btn.close;
-  $("modeClose").textContent = i18n[getLang() || "en"].btn.close;
-
   // Boot
   function boot(){
     applyI18n();
     updateProfileHeader();
     showView("tracker");
 
-    if (!getLang()){
-      openLang();
-      return;
-    }
-    if (!getMode()){
-      openMode();
-      return;
-    }
+    if (!getLang()){ openLang(); return; }
+    if (!getMode()){ openMode(); return; }
     applyModeUI();
-    renderSessions();
-    renderBoards();
-    renderLibrary();
+    renderSessions(); renderBoards(); renderLibrary();
   }
 
-  // Init profile
+  // Init
   nameEl.value = localStorage.getItem(KEY_NAME) || "";
   updateProfileHeader();
-
   boot();
 })();
 </script>
