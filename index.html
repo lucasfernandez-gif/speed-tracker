@@ -1,0 +1,1634 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Speed Tracker</title>
+  <style>
+    :root{
+      --bg:#070711;
+      --text:#ffffff;
+      --muted:rgba(255,255,255,.72);
+      --muted2:rgba(255,255,255,.55);
+      --btn:#1f2141;
+      --shadow: 0 18px 60px rgba(0,0,0,.45);
+      --radius:18px;
+      --good:#36d399;
+      --bad:#fb7185;
+      --warn:#fbbf24;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background:
+        radial-gradient(1200px 800px at 20% 10%, rgba(99,102,241,.22), transparent 55%),
+        radial-gradient(1200px 800px at 80% 30%, rgba(34,197,94,.18), transparent 55%),
+        var(--bg);
+      color:var(--text);
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial;
+    }
+    .wrap{max-width:980px;margin:0 auto;padding:18px}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+    .brand{display:flex;align-items:center;gap:10px}
+    .logo{
+      width:42px;height:42px;border-radius:14px;
+      background:linear-gradient(135deg, rgba(99,102,241,.95), rgba(34,197,94,.8));
+      display:grid;place-items:center;box-shadow:var(--shadow)
+    }
+    .title{line-height:1.1}
+    .title h2{margin:0;font-size:18px}
+    .title .sub{margin:2px 0 0;color:var(--muted2);font-size:12px}
+
+    .tabs{
+      display:flex;gap:10px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.09);
+      border-radius:999px;padding:6px;
+      backdrop-filter: blur(10px);
+      box-shadow:0 10px 30px rgba(0,0,0,.25)
+    }
+    .tab{border:0;background:transparent;color:var(--muted);padding:10px 14px;border-radius:999px;font-weight:800;cursor:pointer}
+    .tab.active{background:rgba(255,255,255,.12);color:var(--text)}
+
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.09);
+      border-radius:var(--radius);
+      padding:16px;
+      margin:12px 0;
+      box-shadow:var(--shadow)
+    }
+    .row{display:flex;gap:12px;flex-wrap:wrap}
+    .kpi{
+      flex:1 1 170px;
+      background:rgba(0,0,0,.18);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:16px;
+      padding:14px
+    }
+    .kpi .v{font-size:30px;font-weight:900;letter-spacing:.3px}
+    .kpi .l{color:var(--muted2);font-size:12px;margin-top:4px}
+
+    .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    button{
+      border:0;border-radius:14px;padding:12px 14px;
+      font-weight:900;cursor:pointer;color:var(--text);
+      background:var(--btn); border:1px solid rgba(255,255,255,.10)
+    }
+    button:disabled{opacity:.5;cursor:not-allowed}
+    .start{background:linear-gradient(135deg, rgba(34,197,94,.95), rgba(16,185,129,.85)); border:0}
+    .stop{background:linear-gradient(135deg, rgba(244,63,94,.95), rgba(251,113,133,.85)); border:0}
+    .ghost{background:rgba(255,255,255,.06)}
+    .small{color:var(--muted2);font-size:13px;line-height:1.35;margin:10px 0 0}
+    .status{margin-top:10px;color:var(--muted);font-size:13px}
+    .pill{
+      display:inline-flex;align-items:center;gap:8px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      padding:8px 10px;border-radius:999px
+    }
+    .avatar{
+      width:34px;height:34px;border-radius:12px;
+      background:rgba(255,255,255,.10);
+      overflow:hidden;display:grid;place-items:center
+    }
+    .avatar img{width:100%;height:100%;object-fit:cover;display:block}
+    input[type="text"]{
+      width:100%;padding:12px;border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.22);
+      color:var(--text);outline:none
+    }
+    input[type="file"]{width:100%}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:10px 8px;border-bottom:1px solid rgba(255,255,255,.10);text-align:left;font-size:14px;vertical-align:middle}
+    th{color:var(--muted2);font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+    .split{display:grid;grid-template-columns: 1fr;gap:12px}
+    @media (min-width: 900px){ .split{grid-template-columns: 1.2fr .8fr;} }
+
+    .overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter: blur(10px);display:none;align-items:center;justify-content:center;padding:18px;z-index:50}
+    .modal{
+      max-width:720px;width:100%;
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:22px;
+      box-shadow:0 25px 80px rgba(0,0,0,.55);
+      padding:16px
+    }
+
+    .choices{display:grid;grid-template-columns:1fr;gap:10px;margin-top:10px}
+    @media (min-width: 520px){ .choices{grid-template-columns:1fr 1fr;} }
+    .choice{background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.10);border-radius:18px;padding:12px;cursor:pointer}
+    .choice:hover{border-color:rgba(99,102,241,.55)}
+    .choice .ico{font-size:22px}
+    .choice .name{font-weight:900;margin-top:6px}
+    .choice .hint{color:var(--muted2);font-size:12px;margin-top:4px}
+    .dangerNote{color:rgba(251,191,36,.95);font-size:12px;margin-top:10px}
+    .right{display:flex;gap:10px;align-items:center;justify-content:flex-end;margin-top:12px}
+
+    .choices3{display:grid;grid-template-columns:1fr;gap:10px;margin-top:10px}
+    @media (min-width: 520px){ .choices3{grid-template-columns:1fr 1fr 1fr;} }
+
+    #driveScreen{
+      display:none;
+      position:fixed; inset:0; z-index:100;
+      padding:18px;
+      background:
+        radial-gradient(900px 600px at 30% 10%, rgba(99,102,241,.25), transparent 55%),
+        radial-gradient(900px 600px at 80% 35%, rgba(34,197,94,.18), transparent 55%),
+        rgba(2,2,10,.90);
+      backdrop-filter: blur(10px);
+    }
+    .gaugeWrap{display:flex; justify-content:center; margin-top:10px;}
+    .gauge{
+      width:min(520px, 100%);
+      height:260px;
+      position:relative;
+      background:rgba(0,0,0,.18);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:22px;
+      padding:14px;
+      overflow:hidden;
+    }
+    .speedBig{
+      position:absolute; inset:0;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      transform: translateY(16px);
+      pointer-events:none;
+    }
+    .speedBig .n{font-size:64px; font-weight:1000; letter-spacing:.5px; line-height:1;}
+    .speedBig .u{color:var(--muted2); font-weight:900; letter-spacing:.12em; text-transform:uppercase; font-size:12px; margin-top:6px;}
+
+    .slideBox{
+      position:relative;
+      background:rgba(0,0,0,.20);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:18px;
+      padding:14px 14px 12px;
+      overflow:hidden;
+    }
+    .slideHint{
+      color:var(--muted2);
+      font-size:12px;
+      font-weight:900;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      margin-bottom:10px;
+    }
+    .slideInput{
+      width:100%;
+      -webkit-appearance:none;
+      appearance:none;
+      height:14px;
+      border-radius:999px;
+      background:rgba(255,255,255,.10);
+      outline:none;
+    }
+    .slideInput::-webkit-slider-thumb{
+      -webkit-appearance:none;
+      appearance:none;
+      width:54px;
+      height:34px;
+      border-radius:16px;
+      background:linear-gradient(135deg, rgba(244,63,94,.95), rgba(251,113,133,.85));
+      border:1px solid rgba(255,255,255,.18);
+      box-shadow: 0 18px 60px rgba(0,0,0,.35);
+    }
+    .slideArrow{
+      position:absolute;
+      right:14px; top:50%;
+      transform:translateY(10px);
+      opacity:.55;
+      pointer-events:none;
+    }
+
+    .item{
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      padding:12px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.18);
+      cursor:pointer;
+    }
+    .item:hover{border-color:rgba(99,102,241,.45)}
+    .item .left{display:flex; gap:10px; align-items:center}
+    .tag{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      color:var(--muted);
+      font-size:12px;
+      font-weight:900;
+      letter-spacing:.04em;
+    }
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;}
+
+    #recordOverlay{
+      display:none;
+      position:fixed; inset:0; z-index:200;
+      background:
+        radial-gradient(900px 600px at 30% 15%, rgba(34,197,94,.25), transparent 55%),
+        radial-gradient(900px 600px at 75% 35%, rgba(99,102,241,.25), transparent 55%),
+        rgba(2,2,10,.92);
+      backdrop-filter: blur(12px);
+      padding:18px;
+    }
+    .recordCard{
+      max-width:740px; margin:0 auto;
+      height:100%;
+      display:flex; flex-direction:column; justify-content:center; gap:14px;
+    }
+    .recordHero{
+      background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:24px;
+      padding:18px;
+      box-shadow:0 25px 90px rgba(0,0,0,.55);
+      position:relative;
+      overflow:hidden;
+    }
+    .recordTitle{font-weight:1000; font-size:18px; letter-spacing:.04em}
+    .recordBig{font-size:64px; font-weight:1100; margin-top:6px; line-height:1}
+    .recordSub{color:var(--muted2); margin-top:6px}
+    .spark{
+      position:absolute; inset:-60px;
+      background: conic-gradient(from 180deg, rgba(34,197,94,.0), rgba(34,197,94,.18), rgba(99,102,241,.18), rgba(34,197,94,.0));
+      filter: blur(18px);
+      animation: spin 5.5s linear infinite;
+      opacity:.8;
+    }
+    @keyframes spin { to{ transform: rotate(360deg);} }
+
+    .confetti{
+      position:absolute; inset:0; pointer-events:none;
+      overflow:hidden;
+    }
+    .confetti i{
+      position:absolute; top:-20px;
+      width:10px; height:18px;
+      background: rgba(255,255,255,.65);
+      border-radius:4px;
+      animation: fall 2.4s linear infinite;
+      opacity:.85;
+    }
+    @keyframes fall{
+      to{ transform: translateY(110vh) rotate(420deg); opacity:.95; }
+    }
+
+    #splash{
+      display:none;
+      position:fixed; inset:0; z-index:300;
+      background:
+        radial-gradient(900px 600px at 30% 10%, rgba(99,102,241,.25), transparent 55%),
+        radial-gradient(900px 600px at 80% 35%, rgba(34,197,94,.18), transparent 55%),
+        rgba(2,2,10,.95);
+      backdrop-filter: blur(12px);
+      padding:18px;
+    }
+    .splashBox{
+      height:100%;
+      max-width:720px;
+      margin:0 auto;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      gap:14px;
+      text-align:center;
+    }
+    .splashTitle{
+      font-weight:1000;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      color:rgba(255,255,255,.85);
+      font-size:12px;
+    }
+    .splashSpeed{
+      font-size:78px;
+      font-weight:1200;
+      line-height:1;
+      letter-spacing:.5px;
+    }
+    .splashUnit{
+      color:var(--muted2);
+      font-weight:900;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      font-size:12px;
+      margin-top:-8px;
+    }
+    .splashBar{
+      width:min(520px, 100%);
+      height:12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.10);
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.12);
+    }
+    .splashFill{
+      height:100%;
+      width:0%;
+      background:linear-gradient(90deg, rgba(99,102,241,.85), rgba(34,197,94,.85));
+      border-radius:999px;
+      box-shadow: 0 18px 60px rgba(0,0,0,.35);
+    }
+    .splashHint{
+      color:var(--muted2);
+      font-size:13px;
+      line-height:1.35;
+      max-width:520px;
+    }
+
+    .devBanner{
+      display:flex; gap:12px; align-items:flex-start;
+      padding:14px;
+      background:rgba(0,0,0,.18);
+      border:1px dashed rgba(251,191,36,.55);
+      border-radius:18px;
+    }
+    .devBanner .ico{font-size:28px; line-height:1}
+    .devBanner .t{font-weight:1000}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo" id="modeIcon">🏁</div>
+        <div class="title">
+          <h2 id="modeTitle">Speed Tracker</h2>
+          <div class="sub" id="modeSub">Track sessions and records</div>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <button class="tab active" id="tabTracker">Tracker</button>
+        <button class="tab" id="tabBoard">Leaderboard</button>
+        <button class="tab" id="tabLibrary">Library</button>
+        <button class="tab" id="tabGlobal">Global</button>
+      </div>
+    </div>
+
+    <div id="viewTracker">
+      <div class="split">
+        <div class="card">
+          <div class="row">
+            <div class="kpi"><div class="v" id="spd">--</div><div class="l" id="lblCur">Current speed (km/h)</div></div>
+            <div class="kpi"><div class="v" id="max">--</div><div class="l" id="lblMax">Max (km/h)</div></div>
+            <div class="kpi"><div class="v" id="dst">--</div><div class="l" id="lblDist">Distance (km)</div></div>
+            <div class="kpi"><div class="v" id="tim">--:--</div><div class="l" id="lblTime">Time</div></div>
+          </div>
+
+          <div class="btns">
+            <button class="start" id="btnStart">Start</button>
+            <button class="stop" id="btnStop" disabled>Stop</button>
+            <button class="ghost" id="btnSave" disabled>Save session</button>
+          </div>
+
+          <div class="status">
+            <span id="lblStatusPrefix">Status:</span> <span id="status">Ready</span>
+          </div>
+
+          <p class="small" id="noteIos"></p>
+        </div>
+
+        <div class="card">
+          <div class="row" style="align-items:center;justify-content:space-between">
+            <div class="pill">
+              <div class="avatar" id="avatarBox">🙂</div>
+              <div>
+                <div style="font-weight:900" id="whoLine">No name</div>
+                <div style="color:var(--muted2);font-size:12px" id="modeLine">Mode: —</div>
+              </div>
+            </div>
+            <button class="ghost" id="btnChangeMode">Change mode</button>
+          </div>
+
+          <div style="margin-top:12px">
+            <div class="small" id="lblYourName">Your name:</div>
+            <input id="name" type="text" placeholder="e.g. Mark" />
+          </div>
+
+          <div style="margin-top:12px">
+            <div class="small" id="lblPhoto">Profile photo (stored on this device):</div>
+            <input id="photo" type="file" accept="image/*" />
+          </div>
+
+          <div class="btns">
+            <button class="ghost" id="btnClear">Clear history</button>
+            <button class="ghost" id="btnChangeLang">Language</button>
+          </div>
+
+          <p class="small" id="lblLocalOnly"></p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin:0 0 8px" id="hdrHistory">History</h3>
+        <table id="tbl">
+          <thead>
+            <tr>
+              <th id="thDate">Date</th>
+              <th id="thMode">Mode</th>
+              <th id="thMax">Max (km/h)</th>
+              <th id="thDist">Dist (km)</th>
+              <th id="thDur">Time</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="viewBoard" style="display:none">
+      <div class="card">
+        <h3 style="margin:0 0 6px" id="hdrBoard">Leaderboard</h3>
+        <p class="small" id="boardNote"></p>
+      </div>
+
+      <div class="card">
+        <h4 style="margin:0 0 10px" id="hdrGlobalLocal">Local global</h4>
+        <table id="tblGlobal">
+          <thead>
+            <tr>
+              <th id="thPhoto">Photo</th>
+              <th id="thName">Name</th>
+              <th id="thMode2">Mode</th>
+              <th id="thMax2">Max (km/h)</th>
+              <th id="thDate2">Date</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <h4 style="margin:0 0 10px" id="hdrByMode">By mode</h4>
+        <table id="tblByMode">
+          <thead>
+            <tr>
+              <th id="thMode3">Mode</th>
+              <th id="thBest">Best max (km/h)</th>
+              <th id="thWhen">Date</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="viewLibrary" style="display:none">
+      <div class="card">
+        <h3 style="margin:0 0 6px" id="hdrLibrary">Library</h3>
+        <p class="small" id="libraryNote"></p>
+      </div>
+
+      <div class="card">
+        <div id="libraryList" style="display:flex; flex-direction:column; gap:10px"></div>
+        <div class="small" id="libraryEmpty" style="display:none"></div>
+      </div>
+    </div>
+
+    <div id="viewGlobal" style="display:none">
+      <div class="card">
+        <h3 style="margin:0 0 6px" id="hdrGlobalTab">Global</h3>
+        <div class="devBanner">
+          <div class="ico">🚧</div>
+          <div>
+            <div class="t" id="globalDevTitle">Under development</div>
+            <div class="small" id="globalDevText">
+              This section is currently in development.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="splash">
+    <div class="splashBox">
+      <div class="logo" style="width:58px;height:58px;border-radius:20px">🏁</div>
+      <div class="splashTitle" id="splashTitle">SPEED TRACKER</div>
+      <div class="splashSpeed"><span id="splashNum">0</span></div>
+      <div class="splashUnit" id="splashUnit">KM/H</div>
+      <div class="splashBar"><div class="splashFill" id="splashFill"></div></div>
+      <div class="splashHint" id="splashHint">Loading…</div>
+    </div>
+  </div>
+
+  <div id="driveScreen">
+    <div class="card" style="height:100%; display:flex; flex-direction:column; justify-content:space-between;">
+      <div>
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px;">
+          <div class="pill">
+            <div class="logo" id="driveIcon" style="width:40px;height:40px;border-radius:14px">🛴</div>
+            <div>
+              <div style="font-weight:900" id="driveModeLabel">Mode</div>
+              <div style="color:var(--muted2);font-size:12px" id="driveStatus">GPS</div>
+            </div>
+          </div>
+
+          <button class="ghost" id="driveMinimize">Back</button>
+        </div>
+
+        <div class="gaugeWrap">
+          <div class="gauge">
+            <svg viewBox="0 0 220 140" width="100%" height="100%">
+              <path d="M20 120 A90 90 0 0 1 200 120" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="16" stroke-linecap="round"/>
+              <path id="gaugeArc" d="M20 120 A90 90 0 0 1 200 120" fill="none" stroke="rgba(99,102,241,.85)" stroke-width="16" stroke-linecap="round"
+                    stroke-dasharray="0 9999" stroke-dashoffset="0"/>
+              <g transform="translate(110,120)">
+                <g id="needleGroup" transform="rotate(-110)">
+                  <line x1="0" y1="0" x2="0" y2="-78" stroke="white" stroke-width="4" stroke-linecap="round" />
+                </g>
+                <circle cx="0" cy="0" r="7" fill="white" />
+              </g>
+            </svg>
+
+            <div class="speedBig">
+              <div class="n" id="driveSpeed">--</div>
+              <div class="u" id="driveUnit">km/h</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:12px">
+          <div class="kpi"><div class="v" id="driveMax">--</div><div class="l" id="driveLblMax">Max</div></div>
+          <div class="kpi"><div class="v" id="driveDist">--</div><div class="l" id="driveLblDist">Distance (km)</div></div>
+          <div class="kpi"><div class="v" id="driveTime">--:--</div><div class="l" id="driveLblTime">Time</div></div>
+          <div class="kpi"><div class="v" id="driveAcc">--</div><div class="l" id="driveLblAcc">Accuracy (m)</div></div>
+        </div>
+      </div>
+
+      <div style="margin-top:14px">
+        <div class="slideBox">
+          <div class="slideHint" id="slideHint">Slide to stop</div>
+          <input id="slideStop" class="slideInput" type="range" min="0" max="100" value="0" />
+          <div class="slideArrow">➡️</div>
+        </div>
+        <div class="small" style="margin-top:10px" id="slideTip"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay" id="langOverlay">
+    <div class="modal">
+      <div class="pill" style="justify-content:flex-start;gap:10px">
+        <div class="logo" style="width:40px;height:40px;border-radius:14px">🌍</div>
+        <div>
+          <div style="font-weight:900;font-size:15px" id="langTitle">Choose language</div>
+          <div style="color:var(--muted2);font-size:12px" id="langSub">Saved for next time</div>
+        </div>
+      </div>
+
+      <div class="choices">
+        <div class="choice" id="pickEs">
+          <div class="ico">🇪🇸</div>
+          <div class="name">Español</div>
+          <div class="hint" id="langEsHint">Interfaz en español</div>
+        </div>
+        <div class="choice" id="pickEn">
+          <div class="ico">🇬🇧</div>
+          <div class="name">English</div>
+          <div class="hint" id="langEnHint">Interface in English</div>
+        </div>
+      </div>
+
+      <div class="right">
+        <button class="ghost" id="langClose">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay" id="modeOverlay">
+    <div class="modal">
+      <div class="pill" style="justify-content:flex-start;gap:10px">
+        <div class="logo" style="width:40px;height:40px;border-radius:14px">⚙️</div>
+        <div>
+          <div style="font-weight:900;font-size:15px" id="modePickTitle">Choose mode</div>
+          <div style="color:var(--muted2);font-size:12px" id="modePickSub">Saved for next time</div>
+        </div>
+      </div>
+
+      <h3 id="modePickQuestion">What are you using?</h3>
+
+      <div class="choices3">
+        <div class="choice" data-mode="scooter">
+          <div class="ico">🛴</div>
+          <div class="name" id="modeScooter">Scooter</div>
+          <div class="hint" id="modeScooterHint">Scooter sessions</div>
+        </div>
+        <div class="choice" data-mode="car">
+          <div class="ico">🚗</div>
+          <div class="name" id="modeCar">Car</div>
+          <div class="hint" id="modeCarHint">Car sessions</div>
+        </div>
+        <div class="choice" data-mode="moto">
+          <div class="ico">🏍️</div>
+          <div class="name" id="modeMoto">Motorbike</div>
+          <div class="hint" id="modeMotoHint">Motorbike sessions</div>
+        </div>
+      </div>
+
+      <div class="dangerNote" id="modeSafety">
+        Safety first. Follow local laws and ride responsibly.
+      </div>
+
+      <div class="right">
+        <button class="ghost" id="modeClose">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay" id="detailOverlay">
+    <div class="modal">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:12px">
+        <div class="pill">
+          <div class="logo" id="detailIcon" style="width:40px;height:40px;border-radius:14px">📚</div>
+          <div>
+            <div style="font-weight:1000" id="detailTitle">Session details</div>
+            <div style="color:var(--muted2);font-size:12px" id="detailSub">—</div>
+          </div>
+        </div>
+        <button class="ghost" id="detailClose">Close</button>
+      </div>
+
+      <div class="row" style="margin-top:12px">
+        <div class="kpi"><div class="v" id="dMax">--</div><div class="l" id="dLblMax">Max (km/h)</div></div>
+        <div class="kpi"><div class="v" id="dAvg">--</div><div class="l" id="dLblAvg">Estimated avg (km/h)</div></div>
+        <div class="kpi"><div class="v" id="dDist">--</div><div class="l" id="dLblDist">Distance (km)</div></div>
+        <div class="kpi"><div class="v" id="dTime">--</div><div class="l" id="dLblTime">Duration</div></div>
+      </div>
+
+      <div class="card" style="margin:12px 0 0; padding:12px; background:rgba(0,0,0,.18)">
+        <div class="small mono" id="detailRaw"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="recordOverlay">
+    <div class="recordCard">
+      <div class="recordHero">
+        <div class="spark"></div>
+        <div class="confetti" id="confetti"></div>
+
+        <div class="pill" style="position:relative; z-index:2">
+          <div class="logo" id="recIcon" style="width:40px;height:40px;border-radius:14px">🏁</div>
+          <div>
+            <div class="recordTitle" id="recTitle">NEW RECORD!</div>
+            <div class="recordSub" id="recModeLine">Mode: —</div>
+          </div>
+        </div>
+
+        <div style="position:relative; z-index:2; margin-top:10px">
+          <div class="recordBig"><span id="recSpeed">--</span> <span style="font-size:18px; color:var(--muted2); font-weight:900" id="recUnit">km/h</span></div>
+          <div class="recordSub"><span id="recBefore">Before:</span> <b id="recPrev">--</b> <span id="recUnit2">km/h</span></div>
+        </div>
+
+        <div class="row" style="position:relative; z-index:2; margin-top:12px">
+          <div class="kpi"><div class="v" id="recDist">--</div><div class="l" id="recLblDist">Distance (km)</div></div>
+          <div class="kpi"><div class="v" id="recTime">--:--</div><div class="l" id="recLblTime">Time</div></div>
+          <div class="kpi"><div class="v" id="recAvg">--</div><div class="l" id="recLblAvg">Estimated avg</div></div>
+        </div>
+
+        <div class="btns" style="position:relative; z-index:2">
+          <button class="ghost" id="recBack">Back</button>
+          <button class="start" id="recSave">Save session</button>
+        </div>
+
+        <div class="small" style="position:relative; z-index:2" id="recNote"></div>
+      </div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const KEY_SESSIONS = "speed_sessions_v5";
+  const KEY_MODE = "speed_mode_v1";
+  const KEY_NAME = "speed_name_v1";
+  const KEY_AVATAR = "speed_avatar_v1";
+  const KEY_LANG = "speed_lang_v1";
+
+  const MODES = {
+    scooter: { label_es:"Patinete", label_en:"Scooter", icon:"🛴", title_es:"Patinete Tracker", title_en:"Scooter Tracker", sub_es:"Registro de sesiones y récords", sub_en:"Track sessions and records", line_es:"Modo: Patinete", line_en:"Mode: Scooter" },
+    car:     { label_es:"Coche",    label_en:"Car",     icon:"🚗", title_es:"Coche Tracker",    title_en:"Car Tracker",    sub_es:"Registro de sesiones y récords", sub_en:"Track sessions and records", line_es:"Modo: Coche",    line_en:"Mode: Car" },
+    moto:    { label_es:"Moto",     label_en:"Motorbike",icon:"🏍️",title_es:"Moto Tracker",     title_en:"Motorbike Tracker",sub_es:"Registro de sesiones y récords", sub_en:"Track sessions and records", line_es:"Modo: Moto",     line_en:"Mode: Motorbike" }
+  };
+
+  const i18n = {
+    es: {
+      tabs: { tracker:"Tracker", board:"Marcador", library:"Biblioteca", global:"Global" },
+      kpi: { cur:"Velocidad actual (km/h)", max:"Máxima (km/h)", dist:"Distancia (km)", time:"Tiempo" },
+      btn: { start:"Iniciar", stop:"Parar", save:"Guardar sesión", clear:"Borrar historial", changeMode:"Cambiar modo", language:"Idioma", back:"Volver", close:"Cerrar" },
+      statusPrefix:"Estado:",
+      statusReady:"Listo",
+      noteIos:`iPhone: Safari → permitir ubicación → Compartir → “Añadir a pantalla de inicio”.<br><span style="color:var(--warn)">Nota:</span> iOS puede pausar GPS con pantalla bloqueada durante periodos largos (limitación web).`,
+      localOnly:"Los datos se guardan localmente en este dispositivo.",
+      history:"Historial",
+      th:{ date:"Fecha", mode:"Modo", max:"Máx (km/h)", dist:"Dist (km)", dur:"Tiempo", photo:"Foto", name:"Nombre", best:"Mejor máx (km/h)", when:"Fecha" },
+      boardTitle:"Marcador",
+      boardNote:"Clasificaciones basadas en sesiones guardadas en este dispositivo.",
+      globalLocal:"Global local",
+      byMode:"Por modo",
+      libraryTitle:"Biblioteca",
+      libraryNote:"Detalle de sesiones guardadas (inicio/fin, media estimada, puntos GPS, precisión).",
+      libraryEmpty:"No hay sesiones guardadas.",
+      yourName:"Nombre:",
+      photo:"Foto de perfil (se guarda en este dispositivo):",
+      drive:{ max:"Máxima", dist:"Distancia (km)", time:"Tiempo", acc:"Precisión (m)", slide:"Desliza para parar", slideTip:"Desliza hasta el final para parar. Si no, vuelve a 0." },
+      modePick:{ title:"Elige modo", sub:"Se guarda para la próxima vez", q:"¿Qué se está usando?", safety:"Conduce de forma responsable y respeta la normativa." },
+      langPick:{ title:"Elige idioma", sub:"Se guardará para la próxima vez" },
+      detail:{ title:"Detalle de sesión", max:"Máxima (km/h)", avg:"Media estimada (km/h)", dist:"Distancia (km)", dur:"Duración" },
+      record:{ title:"¡NUEVO RÉCORD!", before:"Antes:", dist:"Distancia (km)", time:"Tiempo", avg:"Media estimada", note:"Aparece al superar el mejor registro anterior y finalizar la sesión." },
+      splash:{ title:"SPEED TRACKER", hint:"Preparando panel…" },
+      alerts:{ photoBig:"La foto pesa mucho. Elige una más pequeña (menos de ~1.2MB)." },
+      runtime:{
+        askingGps:"Solicitando permiso de ubicación…",
+        recording:(acc)=>`Grabando… precisión ~${acc} m`,
+        stopped:"Sesión parada. Se puede guardar.",
+        gpsError:(m)=>`Error GPS: ${m}`,
+        histCleared:"Historial borrado."
+      },
+      globalDev:{ title:"En desarrollo", text:"Esta sección está actualmente en desarrollo." }
+    },
+    en: {
+      tabs: { tracker:"Tracker", board:"Leaderboard", library:"Library", global:"Global" },
+      kpi: { cur:"Current speed (km/h)", max:"Max (km/h)", dist:"Distance (km)", time:"Time" },
+      btn: { start:"Start", stop:"Stop", save:"Save session", clear:"Clear history", changeMode:"Change mode", language:"Language", back:"Back", close:"Close" },
+      statusPrefix:"Status:",
+      statusReady:"Ready",
+      noteIos:`iPhone: Safari → allow location → Share → “Add to Home Screen”.<br><span style="color:var(--warn)">Note:</span> iOS may pause GPS with the screen locked for long periods (web limitation).`,
+      localOnly:"Data is stored locally on this device.",
+      history:"History",
+      th:{ date:"Date", mode:"Mode", max:"Max (km/h)", dist:"Dist (km)", dur:"Time", photo:"Photo", name:"Name", best:"Best max (km/h)", when:"Date" },
+      boardTitle:"Leaderboard",
+      boardNote:"Rankings based on sessions saved on this device.",
+      globalLocal:"Local global",
+      byMode:"By mode",
+      libraryTitle:"Library",
+      libraryNote:"Session details (start/end, estimated average, GPS points, accuracy).",
+      libraryEmpty:"No saved sessions.",
+      yourName:"Name:",
+      photo:"Profile photo (stored on this device):",
+      drive:{ max:"Max", dist:"Distance (km)", time:"Time", acc:"Accuracy (m)", slide:"Slide to stop", slideTip:"Slide all the way to stop. Otherwise it resets to 0." },
+      modePick:{ title:"Choose mode", sub:"Saved for next time", q:"What is being used?", safety:"Ride responsibly and follow local laws." },
+      langPick:{ title:"Choose language", sub:"Saved for next time" },
+      detail:{ title:"Session details", max:"Max (km/h)", avg:"Estimated avg (km/h)", dist:"Distance (km)", dur:"Duration" },
+      record:{ title:"NEW RECORD!", before:"Before:", dist:"Distance (km)", time:"Time", avg:"Estimated avg", note:"Shown when the previous best is beaten and the session ends." },
+      splash:{ title:"SPEED TRACKER", hint:"Preparing dashboard…" },
+      alerts:{ photoBig:"Photo is too large. Pick a smaller one (under ~1.2MB)." },
+      runtime:{
+        askingGps:"Requesting location permission…",
+        recording:(acc)=>`Recording… accuracy ~${acc} m`,
+        stopped:"Session stopped. It can be saved.",
+        gpsError:(m)=>`GPS error: ${m}`,
+        histCleared:"History cleared."
+      },
+      globalDev:{ title:"Under development", text:"This section is currently in development." }
+    }
+  };
+
+  const $ = (id) => document.getElementById(id);
+  const fmt = (n, d=1) => (Number.isFinite(n) ? n.toFixed(d) : "--");
+  const nowStr = () => new Date().toLocaleString();
+
+  function getLang(){
+    const v = localStorage.getItem(KEY_LANG);
+    return (v === "en" || v === "es") ? v : null;
+  }
+  function setLang(v){
+    localStorage.setItem(KEY_LANG, v);
+    applyI18n();
+  }
+
+  function haversine(lat1, lon1, lat2, lon2) {
+    const R = 6371000;
+    const toRad = (x) => x * Math.PI / 180;
+    const dLat = toRad(lat2 - lat1), dLon = toRad(lon2 - lon1);
+    const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
+    return 2 * R * Math.asin(Math.sqrt(a));
+  }
+
+  function modeLabelFor(mode){
+    const lang = getLang() || "en";
+    if (!MODES[mode]) return mode;
+    return (lang==="es") ? MODES[mode].label_es : MODES[mode].label_en;
+  }
+
+  function getMode(){
+    const m = localStorage.getItem(KEY_MODE);
+    return (m && MODES[m]) ? m : null;
+  }
+  function setMode(m){
+    localStorage.setItem(KEY_MODE, m);
+    applyModeUI();
+  }
+
+  function modeCfg(){
+    const m = getMode();
+    if (!m) return {label:"", icon:"🏁", title:"Speed Tracker", sub:"", line:""};
+    const lang = getLang() || "en";
+    return {
+      icon: MODES[m].icon,
+      label: (lang==="es") ? MODES[m].label_es : MODES[m].label_en,
+      title: (lang==="es") ? MODES[m].title_es : MODES[m].title_en,
+      sub: (lang==="es") ? MODES[m].sub_es : MODES[m].sub_en,
+      line: (lang==="es") ? MODES[m].line_es : MODES[m].line_en
+    };
+  }
+
+  function loadSessions(){
+    try { return JSON.parse(localStorage.getItem(KEY_SESSIONS) || "[]"); }
+    catch { return []; }
+  }
+  function saveSessions(list){
+    localStorage.setItem(KEY_SESSIONS, JSON.stringify(list));
+  }
+
+  function durationStr(ms){
+    const sec = Math.max(0, Math.floor(ms/1000));
+    const mm = String(Math.floor(sec/60)).padStart(2,"0");
+    const ss = String(sec%60).padStart(2,"0");
+    return `${mm}:${ss}`;
+  }
+
+  function avgSpeedKmh(distM, durationMs){
+    const hours = durationMs / 3600000;
+    if (hours <= 0) return NaN;
+    return (distM/1000) / hours;
+  }
+
+  function computePreBest(mode){
+    const list = loadSessions().filter(s => s.mode === mode);
+    let best = 0;
+    for (const s of list){
+      if (Number.isFinite(s.maxKmh) && s.maxKmh > best) best = s.maxKmh;
+    }
+    return best;
+  }
+
+  function applyI18n(){
+    const lang = getLang() || "en";
+    const D = i18n[lang];
+    document.documentElement.lang = lang;
+
+    $("tabTracker").textContent = D.tabs.tracker;
+    $("tabBoard").textContent = D.tabs.board;
+    $("tabLibrary").textContent = D.tabs.library;
+    $("tabGlobal").textContent = D.tabs.global;
+
+    $("lblCur").textContent = D.kpi.cur;
+    $("lblMax").textContent = D.kpi.max;
+    $("lblDist").textContent = D.kpi.dist;
+    $("lblTime").textContent = D.kpi.time;
+
+    $("btnStart").textContent = D.btn.start;
+    $("btnStop").textContent = D.btn.stop;
+    $("btnSave").textContent = D.btn.save;
+    $("btnClear").textContent = D.btn.clear;
+    $("btnChangeMode").textContent = D.btn.changeMode;
+    $("btnChangeLang").textContent = D.btn.language;
+
+    $("lblStatusPrefix").textContent = D.statusPrefix;
+    if ($("status").textContent === "Ready" || $("status").textContent === "Listo") {
+      $("status").textContent = D.statusReady;
+    }
+
+    $("noteIos").innerHTML = D.noteIos;
+    $("lblLocalOnly").textContent = D.localOnly;
+
+    $("hdrHistory").textContent = D.history;
+    $("thDate").textContent = D.th.date;
+    $("thMode").textContent = D.th.mode;
+    $("thMax").textContent = D.th.max;
+    $("thDist").textContent = D.th.dist;
+    $("thDur").textContent = D.th.dur;
+
+    $("hdrBoard").textContent = D.boardTitle;
+    $("boardNote").textContent = D.boardNote;
+    $("hdrGlobalLocal").textContent = D.globalLocal;
+    $("hdrByMode").textContent = D.byMode;
+
+    $("thPhoto").textContent = D.th.photo;
+    $("thName").textContent = D.th.name;
+    $("thMode2").textContent = D.th.mode;
+    $("thMax2").textContent = D.th.max;
+    $("thDate2").textContent = D.th.date;
+
+    $("thMode3").textContent = D.th.mode;
+    $("thBest").textContent = D.th.best;
+    $("thWhen").textContent = D.th.when;
+
+    $("hdrLibrary").textContent = D.libraryTitle;
+    $("libraryNote").textContent = D.libraryNote;
+    $("libraryEmpty").textContent = D.libraryEmpty;
+
+    $("lblYourName").textContent = D.yourName;
+    $("lblPhoto").textContent = D.photo;
+
+    $("driveLblMax").textContent = D.drive.max;
+    $("driveLblDist").textContent = D.drive.dist;
+    $("driveLblTime").textContent = D.drive.time;
+    $("driveLblAcc").textContent = D.drive.acc;
+    $("slideHint").textContent = D.drive.slide;
+    $("slideTip").textContent = D.drive.slideTip;
+    $("driveMinimize").textContent = D.btn.back;
+
+    $("langTitle").textContent = D.langPick.title;
+    $("langSub").textContent = D.langPick.sub;
+    $("langClose").textContent = D.btn.close;
+
+    $("modePickTitle").textContent = D.modePick.title;
+    $("modePickSub").textContent = D.modePick.sub;
+    $("modePickQuestion").textContent = D.modePick.q;
+    $("modeSafety").textContent = D.modePick.safety;
+    $("modeClose").textContent = D.btn.close;
+
+    $("detailTitle").textContent = D.detail.title;
+    $("detailClose").textContent = D.btn.close;
+    $("dLblMax").textContent = D.detail.max;
+    $("dLblAvg").textContent = D.detail.avg;
+    $("dLblDist").textContent = D.detail.dist;
+    $("dLblTime").textContent = D.detail.dur;
+
+    $("recTitle").textContent = D.record.title;
+    $("recBefore").textContent = D.record.before;
+    $("recLblDist").textContent = D.record.dist;
+    $("recLblTime").textContent = D.record.time;
+    $("recLblAvg").textContent = D.record.avg;
+    $("recNote").textContent = D.record.note;
+    $("recBack").textContent = D.btn.back;
+    $("recSave").textContent = D.btn.save;
+
+    $("splashTitle").textContent = D.splash.title;
+    $("splashHint").textContent = D.splash.hint;
+
+    $("hdrGlobalTab").textContent = D.tabs.global;
+    $("globalDevTitle").textContent = D.globalDev.title;
+    $("globalDevText").textContent = D.globalDev.text;
+
+    $("modeScooter").textContent = (lang==="es") ? "Patinete" : "Scooter";
+    $("modeCar").textContent = (lang==="es") ? "Coche" : "Car";
+    $("modeMoto").textContent = (lang==="es") ? "Moto" : "Motorbike";
+    $("modeScooterHint").textContent = (lang==="es") ? "Sesiones de patinete" : "Scooter sessions";
+    $("modeCarHint").textContent = (lang==="es") ? "Sesiones de coche" : "Car sessions";
+    $("modeMotoHint").textContent = (lang==="es") ? "Sesiones de moto" : "Motorbike sessions";
+  }
+
+  const spdEl = $("spd"), maxEl = $("max"), dstEl = $("dst"), timEl = $("tim");
+  const statusEl = $("status");
+  const btnStart = $("btnStart"), btnStop = $("btnStop"), btnSave = $("btnSave");
+  const btnClear = $("btnClear");
+  const btnChangeLang = $("btnChangeLang");
+  const nameEl = $("name");
+  const photoEl = $("photo");
+  const whoLine = $("whoLine");
+  const modeLine = $("modeLine");
+  const avatarBox = $("avatarBox");
+
+  const viewTracker = $("viewTracker");
+  const viewBoard = $("viewBoard");
+  const viewLibrary = $("viewLibrary");
+  const viewGlobal = $("viewGlobal");
+
+  const tabTracker = $("tabTracker");
+  const tabBoard = $("tabBoard");
+  const tabLibrary = $("tabLibrary");
+  const tabGlobal = $("tabGlobal");
+
+  const tblBody = $("tbl").querySelector("tbody");
+  const tblGlobalBody = $("tblGlobal").querySelector("tbody");
+  const tblByModeBody = $("tblByMode").querySelector("tbody");
+
+  const modeIcon = $("modeIcon");
+  const modeTitle = $("modeTitle");
+  const modeSub = $("modeSub");
+
+  const langOverlay = $("langOverlay");
+  const modeOverlay = $("modeOverlay");
+  const detailOverlay = $("detailOverlay");
+  const recordOverlay = $("recordOverlay");
+  const splash = $("splash");
+
+  const driveScreen = $("driveScreen");
+  const driveIcon = $("driveIcon");
+  const driveModeLabel = $("driveModeLabel");
+  const driveStatus = $("driveStatus");
+  const driveSpeed = $("driveSpeed");
+  const driveMax = $("driveMax");
+  const driveDist = $("driveDist");
+  const driveTime = $("driveTime");
+  const driveAcc = $("driveAcc");
+  const slideStop = $("slideStop");
+  const needleGroup = $("needleGroup");
+  const gaugeArc = $("gaugeArc");
+
+  const libraryList = $("libraryList");
+  const libraryEmpty = $("libraryEmpty");
+
+  const detailClose = $("detailClose");
+  const detailIcon = $("detailIcon");
+  const detailSub = $("detailSub");
+  const dMax = $("dMax");
+  const dAvg = $("dAvg");
+  const dDist = $("dDist");
+  const dTime = $("dTime");
+  const detailRaw = $("detailRaw");
+
+  const confetti = $("confetti");
+  const recIcon = $("recIcon");
+  const recModeLine = $("recModeLine");
+  const recSpeed = $("recSpeed");
+  const recPrev = $("recPrev");
+  const recDist = $("recDist");
+  const recTime = $("recTime");
+  const recAvg = $("recAvg");
+  const recBack = $("recBack");
+  const recSave = $("recSave");
+
+  const splashNum = $("splashNum");
+  const splashFill = $("splashFill");
+
+  let watchId = null;
+  let startedAt = null;
+  let lastPoint = null;
+  let maxKmh = 0;
+  let distM = 0;
+  let tickTimer = null;
+
+  let pointsCount = 0;
+  let sumAccuracy = 0;
+  let minAccuracy = Infinity;
+  let maxAccuracy = 0;
+  let startCoord = null;
+  let endCoord = null;
+
+  let preBestKmh = 0;
+  let brokeRecord = false;
+
+  let gaugeTarget = 0;
+  let gaugeShown = 0;
+  let gaugeRaf = null;
+  let arcLen = 0;
+  const maxGauge = 120;
+
+  function setStatus(s){ statusEl.textContent = s; }
+
+  function setTab(which){
+    const tabs = [tabTracker, tabBoard, tabLibrary, tabGlobal];
+    tabs.forEach(t => t.classList.remove("active"));
+
+    viewTracker.style.display = "none";
+    viewBoard.style.display = "none";
+    viewLibrary.style.display = "none";
+    viewGlobal.style.display = "none";
+
+    if (which === "tracker"){
+      tabTracker.classList.add("active");
+      viewTracker.style.display = "";
+    } else if (which === "board"){
+      tabBoard.classList.add("active");
+      viewBoard.style.display = "";
+      renderBoards();
+    } else if (which === "library"){
+      tabLibrary.classList.add("active");
+      viewLibrary.style.display = "";
+      renderLibrary();
+    } else {
+      tabGlobal.classList.add("active");
+      viewGlobal.style.display = "";
+    }
+  }
+
+  tabTracker.onclick = () => setTab("tracker");
+  tabBoard.onclick = () => setTab("board");
+  tabLibrary.onclick = () => setTab("library");
+  tabGlobal.onclick = () => setTab("global");
+
+  function updateProfileHeader(){
+    const lang = getLang() || "en";
+    const who = (nameEl.value || "").trim();
+    whoLine.textContent = who ? who : (lang==="es" ? "Sin nombre" : "No name");
+
+    const avatar = localStorage.getItem(KEY_AVATAR);
+    avatarBox.innerHTML = "";
+    if (avatar){
+      const img = document.createElement("img");
+      img.src = avatar;
+      avatarBox.appendChild(img);
+    } else {
+      avatarBox.textContent = "🙂";
+    }
+  }
+
+  function applyModeUI(){
+    const m = getMode();
+    if (!m) return;
+
+    const cfg = modeCfg();
+    modeIcon.textContent = cfg.icon;
+    modeTitle.textContent = cfg.title;
+    modeSub.textContent = cfg.sub;
+    modeLine.textContent = cfg.line;
+
+    updateProfileHeader();
+    renderSessions();
+    renderBoards();
+    renderLibrary();
+  }
+
+  function renderTime(){
+    if (!startedAt){ timEl.textContent="--:--"; return; }
+    const sec = Math.floor((Date.now()-startedAt)/1000);
+    const mm = String(Math.floor(sec/60)).padStart(2,"0");
+    const ss = String(sec%60).padStart(2,"0");
+    timEl.textContent = `${mm}:${ss}`;
+  }
+
+  function updateKpis(curKmh){
+    spdEl.textContent = fmt(curKmh, 1);
+    maxEl.textContent = fmt(maxKmh, 1);
+    dstEl.textContent = fmt(distM/1000, 2);
+  }
+
+  function resetSessionUI(){
+    spdEl.textContent="--";
+    maxEl.textContent="--";
+    dstEl.textContent="--";
+    timEl.textContent="--:--";
+  }
+
+  function validSpeedKmh(kmh){
+    return kmh >= 0 && kmh <= 300;
+  }
+
+  function renderSessions(){
+    const list = loadSessions().slice().reverse();
+    tblBody.innerHTML = "";
+    for (const s of list){
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${s.when}</td>
+        <td>${modeLabelFor(s.mode)}</td>
+        <td>${fmt(s.maxKmh,1)}</td>
+        <td>${fmt(s.distKm,2)}</td>
+        <td>${s.duration}</td>
+      `;
+      tblBody.appendChild(tr);
+    }
+  }
+
+  function renderBoards(){
+    const list = loadSessions().slice();
+
+    const sorted = list.slice().sort((a,b) => (b.maxKmh||0) - (a.maxKmh||0));
+    tblGlobalBody.innerHTML = "";
+    for (const s of sorted.slice(0, 50)){
+      const tr = document.createElement("tr");
+      const avatar = s.avatar || "";
+      const avatarCell = avatar
+        ? `<div class="avatar"><img src="${avatar}" /></div>`
+        : `<div class="avatar">🙂</div>`;
+      const lang = getLang() || "en";
+      tr.innerHTML = `
+        <td>${avatarCell}</td>
+        <td>${(s.who || (lang==="es" ? "Sin nombre" : "No name"))}</td>
+        <td>${modeLabelFor(s.mode)}</td>
+        <td><b>${fmt(s.maxKmh,1)}</b></td>
+        <td>${s.when}</td>
+      `;
+      tblGlobalBody.appendChild(tr);
+    }
+
+    const best = { scooter:null, car:null, moto:null };
+    for (const s of list){
+      if (!best[s.mode] || (s.maxKmh||0) > (best[s.mode].maxKmh||0)){
+        best[s.mode] = s;
+      }
+    }
+    tblByModeBody.innerHTML = "";
+    for (const k of ["scooter","car","moto"]){
+      const s = best[k];
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${(MODES[k]?.icon||"🏁")} ${modeLabelFor(k)}</td>
+        <td>${s ? `<b>${fmt(s.maxKmh,1)}</b>` : "--"}</td>
+        <td>${s ? s.when : "--"}</td>
+      `;
+      tblByModeBody.appendChild(tr);
+    }
+  }
+
+  function renderLibrary(){
+    const list = loadSessions().slice().reverse();
+    libraryList.innerHTML = "";
+    libraryEmpty.style.display = list.length ? "none" : "block";
+
+    for (const s of list){
+      const label = modeLabelFor(s.mode);
+      const icon = MODES[s.mode]?.icon || "🏁";
+      const avg = Number.isFinite(s.avgKmh) ? s.avgKmh.toFixed(1) : "--";
+      const acc = Number.isFinite(s.avgAccM) ? Math.round(s.avgAccM) : "--";
+
+      const div = document.createElement("div");
+      div.className = "item";
+      div.innerHTML = `
+        <div class="left">
+          <div class="logo" style="width:40px;height:40px;border-radius:14px">${icon}</div>
+          <div>
+            <div style="font-weight:1000">${s.when}</div>
+            <div class="small">
+              ${label} · <b>${fmt(s.maxKmh,1)}</b> km/h · ${fmt(s.distKm,2)} km · ${s.duration} · avg <b>${avg}</b> · acc ~<b>${acc}</b>m
+            </div>
+          </div>
+        </div>
+        <div class="tag">${label}</div>
+      `;
+      div.onclick = () => openDetail(s);
+      libraryList.appendChild(div);
+    }
+  }
+
+  function openDetail(s){
+    detailIcon.textContent = MODES[s.mode]?.icon || "📚";
+    detailSub.textContent = s.when;
+
+    dMax.textContent = fmt(s.maxKmh,1);
+    dDist.textContent = fmt(s.distKm,2);
+    dTime.textContent = s.duration;
+    dAvg.textContent = Number.isFinite(s.avgKmh) ? s.avgKmh.toFixed(1) : "--";
+
+    const lang = getLang() || "en";
+    const lines = [];
+    lines.push(`${lang==="es"?"Nombre":"Name"}: ${(s.who || (lang==="es" ? "Sin nombre" : "No name"))}`);
+    lines.push(`${lang==="es"?"Modo":"Mode"}: ${modeLabelFor(s.mode)}`);
+    lines.push(`${lang==="es"?"Fecha":"Date"}: ${s.when}`);
+    lines.push(`${lang==="es"?"Máxima":"Max"}: ${fmt(s.maxKmh,1)} km/h`);
+    lines.push(`${lang==="es"?"Distancia":"Distance"}: ${fmt(s.distKm,2)} km`);
+    lines.push(`${lang==="es"?"Duración":"Duration"}: ${s.duration} (${s.durationSec ?? "--"} s)`);
+    lines.push(`${lang==="es"?"Media estimada":"Estimated avg"}: ${Number.isFinite(s.avgKmh) ? s.avgKmh.toFixed(2) : "--"} km/h`);
+    lines.push(`${lang==="es"?"Puntos GPS":"GPS points"}: ${s.pointsCount ?? "--"}`);
+    lines.push(`${lang==="es"?"Precisión media":"Avg accuracy"}: ${Number.isFinite(s.avgAccM) ? Math.round(s.avgAccM) : "--"} m`);
+    lines.push(`${lang==="es"?"Precisión min/max":"Min/Max accuracy"}: ${Number.isFinite(s.minAccM) ? Math.round(s.minAccM) : "--"} / ${Number.isFinite(s.maxAccM) ? Math.round(s.maxAccM) : "--"} m`);
+    lines.push(`${lang==="es"?"Inicio (lat,lon)":"Start (lat,lon)"}: ${s.startLat ?? "--"}, ${s.startLon ?? "--"}`);
+    lines.push(`${lang==="es"?"Fin (lat,lon)":"End (lat,lon)"}: ${s.endLat ?? "--"}, ${s.endLon ?? "--"}`);
+
+    detailRaw.innerHTML = lines.map(x => x.replace(/</g,"&lt;").replace(/>/g,"&gt;")).join("<br/>");
+    detailOverlay.style.display = "flex";
+  }
+
+  detailClose.onclick = () => detailOverlay.style.display = "none";
+  detailOverlay.addEventListener("click", (e) => { if (e.target === detailOverlay) detailOverlay.style.display="none"; });
+
+  function showDriveScreen(show){
+    driveScreen.style.display = show ? "block" : "none";
+    if (show) slideStop.value = "0";
+  }
+
+  $("driveMinimize").onclick = () => showDriveScreen(false);
+
+  slideStop.addEventListener("input", () => {
+    const v = Number(slideStop.value || 0);
+    if (v >= 100) {
+      btnStop.click();
+      showDriveScreen(false);
+      slideStop.value = "0";
+    }
+  });
+  slideStop.addEventListener("change", () => {
+    const v = Number(slideStop.value || 0);
+    if (v < 100) slideStop.value = "0";
+  });
+
+  function setGaugeSpeed(kmh){
+    const clamped = Math.max(0, Math.min(maxGauge, kmh));
+    gaugeTarget = clamped;
+
+    if (!gaugeRaf){
+      const step = () => {
+        gaugeShown += (gaugeTarget - gaugeShown) * 0.12;
+
+        const angle = (-110 + (gaugeShown / maxGauge) * 220);
+        needleGroup.setAttribute("transform", `rotate(${angle})`);
+
+        const frac = gaugeShown / maxGauge;
+        if (arcLen > 0) {
+          const drawn = Math.max(0, Math.min(arcLen, arcLen * frac));
+          gaugeArc.style.strokeDasharray = `${drawn} ${arcLen}`;
+        }
+
+        gaugeRaf = requestAnimationFrame(step);
+      };
+      gaugeRaf = requestAnimationFrame(step);
+    }
+  }
+
+  function updateDriveUI(curKmh, accM){
+    driveSpeed.textContent = Number.isFinite(curKmh) ? curKmh.toFixed(0) : "--";
+    driveMax.textContent = fmt(maxKmh, 1);
+    driveDist.textContent = fmt(distM / 1000, 2);
+    driveTime.textContent = timEl.textContent;
+    driveAcc.textContent = Number.isFinite(accM) ? String(Math.round(accM)) : "--";
+    setGaugeSpeed(Number.isFinite(curKmh) ? curKmh : 0);
+  }
+
+  function buildConfetti(){
+    confetti.innerHTML = "";
+    const n = 26;
+    for (let i=0;i<n;i++){
+      const p = document.createElement("i");
+      const left = Math.random()*100;
+      const delay = Math.random()*0.9;
+      const dur = 1.8 + Math.random()*1.2;
+      const w = 8 + Math.random()*10;
+      const h = 10 + Math.random()*14;
+      p.style.left = left + "%";
+      p.style.animationDelay = delay + "s";
+      p.style.animationDuration = dur + "s";
+      p.style.width = w + "px";
+      p.style.height = h + "px";
+      p.style.background = (Math.random() > 0.5) ? "rgba(34,197,94,.75)" : "rgba(99,102,241,.75)";
+      confetti.appendChild(p);
+    }
+  }
+  function showRecordOverlay(show){
+    recordOverlay.style.display = show ? "block" : "none";
+    if (show) buildConfetti();
+  }
+  recBack.onclick = () => showRecordOverlay(false);
+  recSave.onclick = () => { btnSave.click(); showRecordOverlay(false); };
+
+  async function runSplashThenEnter(){
+    splash.style.display = "block";
+    const lang = getLang() || "en";
+    $("splashTitle").textContent = i18n[lang].splash.title;
+    $("splashHint").textContent = i18n[lang].splash.hint;
+
+    const target = 120;
+    const durMs = 900;
+    const start = performance.now();
+    const tick = (t0) => {
+      const p = Math.min(1, (t0 - start) / durMs);
+      const eased = 1 - Math.pow(1 - p, 3);
+      const val = Math.round(target * eased);
+      splashNum.textContent = String(val);
+      splashFill.style.width = (eased * 100).toFixed(1) + "%";
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+
+    await new Promise(r => setTimeout(r, 1050));
+    splash.style.display = "none";
+    applyModeUI();
+    setTab("tracker");
+  }
+
+  function bootFlow(){
+    applyI18n();
+    const lang = getLang();
+    if (!lang){
+      langOverlay.style.display = "flex";
+      return;
+    }
+    const mode = getMode();
+    if (!mode){
+      modeOverlay.style.display = "flex";
+      return;
+    }
+    runSplashThenEnter();
+  }
+
+  $("pickEs").onclick = () => { setLang("es"); langOverlay.style.display="none"; bootFlow(); };
+  $("pickEn").onclick = () => { setLang("en"); langOverlay.style.display="none"; bootFlow(); };
+  $("langClose").onclick = () => { langOverlay.style.display="none"; };
+
+  $("modeClose").onclick = () => { modeOverlay.style.display="none"; };
+  document.querySelectorAll('#modeOverlay .choice[data-mode]').forEach(el => {
+    el.addEventListener("click", () => {
+      const m = el.getAttribute("data-mode");
+      if (m && MODES[m]) {
+        setMode(m);
+        modeOverlay.style.display = "none";
+        runSplashThenEnter();
+      }
+    });
+  });
+
+  $("btnChangeMode").onclick = () => { modeOverlay.style.display = "flex"; };
+  btnChangeLang.onclick = () => { langOverlay.style.display = "flex"; };
+
+  nameEl.value = localStorage.getItem(KEY_NAME) || "";
+  nameEl.oninput = () => { localStorage.setItem(KEY_NAME, nameEl.value); updateProfileHeader(); };
+
+  photoEl.onchange = async () => {
+    const file = photoEl.files && photoEl.files[0];
+    if (!file) return;
+    if (file.size > 1_200_000){
+      alert(i18n[getLang()||"en"].alerts.photoBig);
+      photoEl.value = "";
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = String(reader.result || "");
+      localStorage.setItem(KEY_AVATAR, dataUrl);
+      updateProfileHeader();
+    };
+    reader.readAsDataURL(file);
+  };
+
+  function getAvatar(){ return localStorage.getItem(KEY_AVATAR) || ""; }
+
+  btnClear.onclick = () => {
+    localStorage.removeItem(KEY_SESSIONS);
+    renderSessions();
+    renderBoards();
+    renderLibrary();
+    setStatus(i18n[getLang()||"en"].runtime.histCleared);
+  };
+
+  btnStart.onclick = async () => {
+    const lang = getLang() || "en";
+    if (!navigator.geolocation) {
+      setStatus(lang==="es" ? "Geolocalización no disponible." : "Geolocation not available.");
+      return;
+    }
+    const mode = getMode();
+    if (!mode) { modeOverlay.style.display="flex"; return; }
+
+    preBestKmh = computePreBest(mode);
+    brokeRecord = false;
+
+    maxKmh = 0; distM = 0; lastPoint = null;
+    pointsCount = 0; sumAccuracy = 0; minAccuracy = Infinity; maxAccuracy = 0;
+    startCoord = null; endCoord = null;
+
+    const cfg = modeCfg();
+    driveIcon.textContent = cfg.icon;
+    driveModeLabel.textContent = cfg.label;
+    driveStatus.textContent = lang==="es" ? "Pidiendo GPS…" : "Requesting GPS…";
+    showDriveScreen(true);
+
+    setStatus(i18n[lang].runtime.askingGps);
+
+    startedAt = Date.now();
+    renderTime();
+    updateKpis(NaN);
+    updateDriveUI(NaN, NaN);
+
+    btnStart.disabled = true;
+    btnStop.disabled = false;
+    btnSave.disabled = true;
+
+    tickTimer = setInterval(() => {
+      renderTime();
+      driveTime.textContent = timEl.textContent;
+    }, 500);
+
+    watchId = navigator.geolocation.watchPosition((pos) => {
+      const { latitude: lat, longitude: lon, speed, accuracy } = pos.coords;
+
+      pointsCount += 1;
+      if (Number.isFinite(accuracy)) {
+        sumAccuracy += accuracy;
+        if (accuracy < minAccuracy) minAccuracy = accuracy;
+        if (accuracy > maxAccuracy) maxAccuracy = accuracy;
+      }
+      if (!startCoord) startCoord = {lat, lon};
+      endCoord = {lat, lon};
+
+      let curKmh = (typeof speed === "number") ? speed * 3.6 : NaN;
+
+      if (lastPoint) {
+        const d = haversine(lastPoint.lat, lastPoint.lon, lat, lon);
+        if (d <= 250) distM += d;
+      }
+      lastPoint = { lat, lon, t: pos.timestamp };
+
+      if (Number.isFinite(curKmh) && validSpeedKmh(curKmh)) {
+        if (curKmh > maxKmh) maxKmh = curKmh;
+      }
+
+      if (!brokeRecord && maxKmh > (preBestKmh + 0.05)) brokeRecord = true;
+
+      updateKpis(curKmh);
+      updateDriveUI(curKmh, accuracy);
+
+      setStatus(i18n[lang].runtime.recording(Math.round(accuracy)));
+      driveStatus.textContent = lang==="es" ? "Grabando…" : "Recording…";
+    }, (err) => {
+      setStatus(i18n[lang].runtime.gpsError(err.message));
+      driveStatus.textContent = i18n[lang].runtime.gpsError(err.message);
+
+      btnStart.disabled = false;
+      btnStop.disabled = true;
+      btnSave.disabled = true;
+
+      if (tickTimer) clearInterval(tickTimer);
+      tickTimer = null;
+      startedAt = null;
+    }, {
+      enableHighAccuracy: true,
+      maximumAge: 1000,
+      timeout: 15000
+    });
+  };
+
+  btnStop.onclick = () => {
+    const lang = getLang() || "en";
+
+    if (watchId != null) navigator.geolocation.clearWatch(watchId);
+    watchId = null;
+    if (tickTimer) clearInterval(tickTimer);
+    tickTimer = null;
+
+    btnStart.disabled = false;
+    btnStop.disabled = true;
+    btnSave.disabled = false;
+
+    setStatus(i18n[lang].runtime.stopped);
+    driveStatus.textContent = lang==="es" ? "Parada" : "Stopped";
+    renderTime();
+
+    if (brokeRecord) {
+      const cfg = modeCfg();
+      const durationMs = startedAt ? (Date.now() - startedAt) : 0;
+      const avg = avgSpeedKmh(distM, durationMs);
+
+      recIcon.textContent = cfg.icon;
+      recModeLine.textContent = (lang==="es") ? `Modo: ${cfg.label}` : `Mode: ${cfg.label}`;
+      recSpeed.textContent = fmt(maxKmh, 1);
+      recPrev.textContent = fmt(preBestKmh, 1);
+      recDist.textContent = fmt(distM/1000, 2);
+      recTime.textContent = durationStr(durationMs);
+      recAvg.textContent = Number.isFinite(avg) ? avg.toFixed(1) : "--";
+
+      showRecordOverlay(true);
+    }
+  };
+
+  btnSave.onclick = () => {
+    if (!startedAt) return;
+
+    const lang = getLang() || "en";
+    const endAt = Date.now();
+    const durMs = endAt - startedAt;
+    const durSec = Math.max(0, Math.floor(durMs/1000));
+
+    const mode = getMode();
+    const avg = avgSpeedKmh(distM, durMs);
+    const avgAcc = (pointsCount > 0) ? (sumAccuracy / pointsCount) : NaN;
+
+    const session = {
+      who: (nameEl.value || "").trim(),
+      avatar: getAvatar(),
+      mode,
+      when: nowStr(),
+      maxKmh: maxKmh,
+      distKm: distM / 1000,
+      duration: durationStr(durMs),
+      durationSec: durSec,
+      avgKmh: avg,
+      pointsCount,
+      avgAccM: avgAcc,
+      minAccM: (minAccuracy === Infinity ? NaN : minAccuracy),
+      maxAccM: maxAccuracy,
+      startLat: startCoord ? startCoord.lat : null,
+      startLon: startCoord ? startCoord.lon : null,
+      endLat: endCoord ? endCoord.lat : null,
+      endLon: endCoord ? endCoord.lon : null
+    };
+
+    const list = loadSessions();
+    list.push(session);
+    saveSessions(list);
+
+    setStatus(lang==="es" ? "Guardado ✅" : "Saved ✅");
+    btnSave.disabled = true;
+    startedAt = null;
+
+    resetSessionUI();
+    renderSessions();
+    renderBoards();
+    renderLibrary();
+    showDriveScreen(false);
+  };
+
+  try {
+    arcLen = gaugeArc.getTotalLength();
+    gaugeArc.style.strokeDasharray = `0 ${arcLen}`;
+  } catch { arcLen = 0; }
+
+  updateProfileHeader();
+  applyI18n();
+  setTab("tracker");
+  renderSessions();
+  renderBoards();
+  renderLibrary();
+  bootFlow();
+})();
+</script>
+</body>
+</html>
